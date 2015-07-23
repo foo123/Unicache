@@ -1,8 +1,5 @@
 #UNICACHE 
 
-### Further development on this project has stopped!!
-
-
 __An agnostic universal total PHP caching framework__
 
 ###Contents
