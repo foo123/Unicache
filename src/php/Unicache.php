@@ -3,7 +3,7 @@
 *  Unicache
 *  An agnostic caching framework for PHP, Python, Node/JS
 *
-*  @version: 1.0.0
+*  @version: 1.1.0
 *  https://github.com/foo123/Unicache
 *
 **/
@@ -15,51 +15,101 @@ abstract class UNICACHE_Cache
     abstract function get( $key );
     abstract function put( $key, $data, $ttl );
     abstract function remove( $key );
+    abstract function clear( );
 }
 
 class UNICACHE_Factory
 {
-    const VERSION = '1.0.0';
+    const VERSION = '1.1.0';
     public static function getCache( $config )
     {
-        $backend = strtoupper($config['cacheType']);
+        $backend = isset($config['cacheType']) ? strtoupper((string)$config['cacheType']) : 'MEMORY';
         $cache = null;
         switch( $backend )
         {
             case 'FILE': 
                 require_once(dirname(__FILE__).'/adapters/UnicacheFile.php');
-                $cache = new UNICACHE_FileCache();
-                $cache->setCacheDir( $config['FILE']['cacheDir'] );
+                if ( !UNICACHE_FileCache::isSupported() )
+                {
+                    throw new \Exception('UNICACHE: Cache "'.$backend.'" is NOT supported!');
+                }
+                else
+                {
+                    $cache = new UNICACHE_FileCache();
+                    $cache->setCacheDir( $config['FILE']['cacheDir'] );
+                }
                 break;
             case 'APC': 
                 require_once(dirname(__FILE__).'/adapters/UnicacheApc.php');
-                $cache = new UNICACHE_APCCache();
+                if ( !UNICACHE_APCCache::isSupported() )
+                {
+                    throw new \Exception('UNICACHE: Cache "'.$backend.'" is NOT supported!');
+                }
+                else
+                {
+                    $cache = new UNICACHE_APCCache();
+                }
                 break;
             case 'APCU': 
                 require_once(dirname(__FILE__).'/adapters/UnicacheApcu.php');
-                $cache = new UNICACHE_APCUCache();
+                if ( !UNICACHE_APCUCache::isSupported() )
+                {
+                    throw new \Exception('UNICACHE: Cache "'.$backend.'" is NOT supported!');
+                }
+                else
+                {
+                    $cache = new UNICACHE_APCUCache();
+                }
                 break;
             case 'XCACHE': 
                 require_once(dirname(__FILE__).'/adapters/UnicacheXCache.php');
-                $cache = new UNICACHE_XCache();
+                if ( !UNICACHE_XCache::isSupported() )
+                {
+                    throw new \Exception('UNICACHE: Cache "'.$backend.'" is NOT supported!');
+                }
+                else
+                {
+                    $cache = new UNICACHE_XCache();
+                }
                 break;
             case 'MEMCACHED': 
                 require_once(dirname(__FILE__).'/adapters/UnicacheMemcached.php');
-                $cache = new UNICACHE_MemcachedCache();
-                foreach ((array)$config['MEMCACHED']['servers'] as $srv)
+                if ( !UNICACHE_MemcachedCache::isSupported() )
                 {
-                    $cache->addServer( $srv['host'], $srv['port'], $srv['weight'] );
+                    throw new \Exception('UNICACHE: Cache "'.$backend.'" is NOT supported!');
+                }
+                else
+                {
+                    $cache = new UNICACHE_MemcachedCache();
+                    foreach ((array)$config['MEMCACHED']['servers'] as $srv)
+                    {
+                        $cache->addServer( $srv['host'], $srv['port'], $srv['weight'] );
+                    }
                 }
                 break;
             case 'REDIS': 
                 require_once(dirname(__FILE__).'/adapters/UnicacheRedis.php');
-                $cache = new UNICACHE_RedisCache();
-                $cache->server( $config['REDIS']['server']['host'], $config['REDIS']['server']['port'] );
+                if ( !UNICACHE_RedisCache::isSupported() )
+                {
+                    throw new \Exception('UNICACHE: Cache "'.$backend.'" is NOT supported!');
+                }
+                else
+                {
+                    $cache = new UNICACHE_RedisCache();
+                    $cache->server( $config['REDIS']['server']['host'], $config['REDIS']['server']['port'] );
+                }
                 break;
             default: 
                 // default in-memory cache
                 require_once(dirname(__FILE__).'/adapters/UnicacheMemory.php');
-                $cache = new UNICACHE_MemoryCache();
+                if ( !UNICACHE_MemoryCache::isSupported() )
+                {
+                    throw new \Exception('UNICACHE: Cache "MEMORY" is NOT supported!');
+                }
+                else
+                {
+                    $cache = new UNICACHE_MemoryCache();
+                }
                 break;
         }
         return $cache;

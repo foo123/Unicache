@@ -2,7 +2,17 @@
 
 class UNICACHE_MemoryCache extends UNICACHE_Cache
 {
-    private $_cache = array();
+    public static function isSupported( )
+    {
+        return true;
+    }
+    
+    private $_cache;
+
+    public function __construct()
+    {
+        $this->_cache = array();
+    }
 
     public function put( $key, $data, $ttl )
     {
@@ -11,7 +21,6 @@ class UNICACHE_MemoryCache extends UNICACHE_Cache
 
     public function get( $key )
     {
-     
         if ( !isset($this->_cache[$key]) ) return false;
         
         $data = $this->_cache[$key];
@@ -25,6 +34,12 @@ class UNICACHE_MemoryCache extends UNICACHE_Cache
     {
         if ( !isset($this->_cache[$key]) ) return false;
         unset($this->_cache[$key]);
+        return true;
+    }
+
+    public function remove( $key )
+    {
+        $this->_cache = array();
         return true;
     }
 } 

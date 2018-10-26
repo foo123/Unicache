@@ -2,6 +2,11 @@
 
 class UNICACHE_FileCache extends UNICACHE_Cache
 {
+    public static function isSupported( )
+    {
+        return true;
+    }
+    
     private $cachedir = '';
 
     public function put( $key, $data, $ttl )
@@ -40,14 +45,14 @@ class UNICACHE_FileCache extends UNICACHE_Cache
         $data = @unserialize($data);
         if (!$data)
         {
-            unlink($filename);
+            @unlink($filename);
             return false;
         }
 
         if (time() > $data[0])
         {
             // Unlinking when the file was expired
-            unlink($filename);
+            @unlink($filename);
             return false;
         }
         return $data[1];
@@ -57,9 +62,24 @@ class UNICACHE_FileCache extends UNICACHE_Cache
     {
         $filename = $this->getFileName($key);
         if (file_exists($filename))
-            return unlink($filename);
+            return @unlink($filename);
         else
             return false;
+    }
+     
+    public function clear( )
+    {
+        if ($handle = opendir($this->cachedir))
+        {
+            while (false !== ($file=readdir($handle)))
+            {
+                if( is_file($file) )
+                    @unlink($file);
+            }
+            closedir($handle);
+            return true;
+        }
+        return false;
     }
      
     public function setCacheDir( $dir )
@@ -67,6 +87,7 @@ class UNICACHE_FileCache extends UNICACHE_Cache
         $this->cachedir = rtrim((string)$dir, '/\\');
         if ( !(file_exists($this->cachedir) && is_dir($this->cachedir)) )
             @mkdir($this->cachedir);
+        return $this;
     }
 
     protected function getFileName( $key )
