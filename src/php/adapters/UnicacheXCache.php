@@ -4,7 +4,8 @@ class UNICACHE_XCache extends UNICACHE_Cache
 {
     public static function isSupported( )
     {
-        return (function_exists('xcache_get') && function_exists('xcache_set') && function_exists('xcache_unset'));
+        return extension_loaded('xcache');
+				//return (function_exists('xcache_get') && function_exists('xcache_set') && function_exists('xcache_unset'));
     }
     
     public function get( $key )

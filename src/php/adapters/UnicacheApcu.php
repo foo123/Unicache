@@ -4,7 +4,8 @@ class UNICACHE_APCUCache extends UNICACHE_Cache
 {
     public static function isSupported( )
     {
-        return (function_exists('apcu_fetch') && function_exists('apcu_store') && function_exists('apcu_delete'));
+        return extension_loaded('apcu');
+				//return (function_exists('apcu_fetch') && function_exists('apcu_store') && function_exists('apcu_delete'));
     }
     
     public function get( $key )
