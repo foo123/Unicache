@@ -3,7 +3,7 @@
 *  Unicache
 *  An agnostic caching framework for PHP, Python, Node/JS
 *
-*  @version: 1.1.0
+*  @version: 1.2.0
 *  https://github.com/foo123/Unicache
 *
 **/
@@ -16,15 +16,24 @@ abstract class UNICACHE_Cache
     abstract function put( $key, $data, $ttl );
     abstract function remove( $key );
     abstract function clear( );
+    
+    protected $prefix = '';
+    public function setPrefix( $prefix )
+    {
+        $this->prefix = isset($prefix) ? (string)$prefix : '';
+        return $this;
+    }
 }
 
 class UNICACHE_Factory
 {
-    const VERSION = '1.1.0';
+    const VERSION = '1.2.0';
+    
     public static function getCache( $config )
     {
         $backend = isset($config['cacheType']) ? strtoupper((string)$config['cacheType']) : 'MEMORY';
         $cache = null;
+        
         switch( $backend )
         {
             case 'FILE': 
@@ -112,6 +121,7 @@ class UNICACHE_Factory
                 }
                 break;
         }
+        $cache->setPrefix( isset($config['prefix']) ? $config['prefix'] : '' );
         return $cache;
     }
 }

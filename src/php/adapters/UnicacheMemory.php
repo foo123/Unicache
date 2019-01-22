@@ -14,16 +14,21 @@ class UNICACHE_MemoryCache extends UNICACHE_Cache
         $this->_cache = array();
     }
 
+    public function __destruct()
+    {
+        $this->_cache = null;
+    }
+
     public function put( $key, $data, $ttl )
     {
-        $this->_cache[$key] = array(time()+(int)$ttl,$data);
+        $this->_cache[$this->prefix.$key] = array(time()+(int)$ttl,$data);
     }
 
     public function get( $key )
     {
-        if ( !isset($this->_cache[$key]) ) return false;
+        if ( !isset($this->_cache[$this->prefix.$key]) ) return false;
         
-        $data = $this->_cache[$key];
+        $data = $this->_cache[$this->prefix.$key];
         if ( !$data ) return false;
 
         if ( time() > $data[0] ) return false;
@@ -32,12 +37,12 @@ class UNICACHE_MemoryCache extends UNICACHE_Cache
 
     public function remove( $key )
     {
-        if ( !isset($this->_cache[$key]) ) return false;
-        unset($this->_cache[$key]);
+        if ( !isset($this->_cache[$this->prefix.$key]) ) return false;
+        unset($this->_cache[$this->prefix.$key]);
         return true;
     }
 
-    public function remove( $key )
+    public function clear( )
     {
         $this->_cache = array();
         return true;

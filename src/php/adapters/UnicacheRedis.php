@@ -12,21 +12,30 @@ class UNICACHE_RedisCache extends UNICACHE_Cache
     // Lightweight Redis client
     private $redis;
 
+    public function __construct()
+    {
+    }
+    
+    public function __destruct()
+    {
+        $this->redis = null;
+    }
+    
     public function put( $key, $data, $ttl )
     {
         $data = serialize(array(time()+(int)$ttl, $data));
-        return $this->redis->cmd('SET', $key, $data)->cmd('EXPIRE', $key, (int)$ttl)->set();
+        return $this->redis->cmd('SET', $this->prefix.$key, $data)->cmd('EXPIRE', $this->prefix.$key, (int)$ttl)->set();
     }
 
     public function get( $key )
     {
-        $data = $this->redis->cmd('GET', $key)->get();
+        $data = $this->redis->cmd('GET', $this->prefix.$key)->get();
         if ( !$data ) return false;
         $data = @unserialize($data);
         if ( !$data ) return false;
         if ( time() > $data[0] )
         {
-            $this->redis->cmd('DEL', $key)->set();
+            $this->redis->cmd('DEL', $this->prefix.$key)->set();
             return false;
         }
         return $data[1];
@@ -34,12 +43,12 @@ class UNICACHE_RedisCache extends UNICACHE_Cache
 
     public function remove( $key )
     {
-        return $this->redis->cmd('DEL', $key)->set();
+        return $this->redis->cmd('DEL', $this->prefix.$key)->set();
     }
 
     public function clear( )
     {
-        $keys = $this->redis->cmd('KEYS', '*')->get();
+        $keys = $this->redis->cmd('KEYS', $this->prefix.'*')->get();
         if ( !$keys ) return true;
         foreach($keys as $key)
         {

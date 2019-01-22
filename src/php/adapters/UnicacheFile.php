@@ -9,6 +9,14 @@ class UNICACHE_FileCache extends UNICACHE_Cache
     
     private $cachedir = '';
 
+    public function __construct()
+    {
+    }
+    
+    public function __destruct()
+    {
+    }
+    
     public function put( $key, $data, $ttl )
     {
         // Opening the file in read/write mode
@@ -39,7 +47,7 @@ class UNICACHE_FileCache extends UNICACHE_Cache
         // Getting a shared lock
         flock($ch,LOCK_SH);
          
-        $data = file_get_contents($filename);
+        $data = (string)fread($ch, filesize($filename));
         fclose($ch);
          
         $data = @unserialize($data);
@@ -69,7 +77,7 @@ class UNICACHE_FileCache extends UNICACHE_Cache
      
     public function clear( )
     {
-        if ($handle = opendir($this->cachedir))
+        /*if ($handle = opendir($this->cachedir))
         {
             while (false !== ($file=readdir($handle)))
             {
@@ -79,19 +87,29 @@ class UNICACHE_FileCache extends UNICACHE_Cache
             closedir($handle);
             return true;
         }
-        return false;
+        return false;*/
+        $files = glob($this->cachedir . DIRECTORY_SEPARATOR . $this->prefix . '*');
+        if ( !empty($files) )
+        {
+            foreach((array)$files as $file)
+            {
+                if( is_file($file) )
+                    @unlink($file);
+            }
+        }
+        return true;
     }
      
     public function setCacheDir( $dir )
     {
         $this->cachedir = rtrim((string)$dir, '/\\');
         if ( !(file_exists($this->cachedir) && is_dir($this->cachedir)) )
-            @mkdir($this->cachedir);
+            @mkdir($this->cachedir, 0755, true); // recursive
         return $this;
     }
 
     protected function getFileName( $key )
     {
-        return $this->cachedir . DIRECTORY_SEPARATOR . md5($key);
+        return $this->cachedir . DIRECTORY_SEPARATOR . $this->prefix . md5($key);
     }
 } 
