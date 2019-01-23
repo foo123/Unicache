@@ -37,10 +37,11 @@ class UNICACHE_Factory
         switch( $backend )
         {
             case 'FILE': 
-                require_once(dirname(__FILE__).'/adapters/UnicacheFile.php');
+                if ( !class_exists('UNICACHE_FileCache', false) )
+                    require_once(dirname(__FILE__).'/adapters/UnicacheFile.php');
                 if ( !UNICACHE_FileCache::isSupported() )
                 {
-                    throw new \Exception('UNICACHE: Cache "'.$backend.'" is NOT supported!');
+                    throw new \RunTimeException('UNICACHE: Cache "'.$backend.'" is NOT supported!');
                 }
                 else
                 {
@@ -49,10 +50,11 @@ class UNICACHE_Factory
                 }
                 break;
             case 'APC': 
-                require_once(dirname(__FILE__).'/adapters/UnicacheApc.php');
+                if ( !class_exists('UNICACHE_APCCache', false) )
+                    require_once(dirname(__FILE__).'/adapters/UnicacheApc.php');
                 if ( !UNICACHE_APCCache::isSupported() )
                 {
-                    throw new \Exception('UNICACHE: Cache "'.$backend.'" is NOT supported!');
+                    throw new \RunTimeException('UNICACHE: Cache "'.$backend.'" is NOT supported!');
                 }
                 else
                 {
@@ -60,10 +62,11 @@ class UNICACHE_Factory
                 }
                 break;
             case 'APCU': 
-                require_once(dirname(__FILE__).'/adapters/UnicacheApcu.php');
+                if ( !class_exists('UNICACHE_APCUCache', false) )
+                    require_once(dirname(__FILE__).'/adapters/UnicacheApcu.php');
                 if ( !UNICACHE_APCUCache::isSupported() )
                 {
-                    throw new \Exception('UNICACHE: Cache "'.$backend.'" is NOT supported!');
+                    throw new \RunTimeException('UNICACHE: Cache "'.$backend.'" is NOT supported!');
                 }
                 else
                 {
@@ -71,10 +74,11 @@ class UNICACHE_Factory
                 }
                 break;
             case 'XCACHE': 
-                require_once(dirname(__FILE__).'/adapters/UnicacheXCache.php');
+                if ( !class_exists('UNICACHE_XCache', false) )
+                    require_once(dirname(__FILE__).'/adapters/UnicacheXCache.php');
                 if ( !UNICACHE_XCache::isSupported() )
                 {
-                    throw new \Exception('UNICACHE: Cache "'.$backend.'" is NOT supported!');
+                    throw new \RunTimeException('UNICACHE: Cache "'.$backend.'" is NOT supported!');
                 }
                 else
                 {
@@ -82,10 +86,11 @@ class UNICACHE_Factory
                 }
                 break;
             case 'MEMCACHED': 
-                require_once(dirname(__FILE__).'/adapters/UnicacheMemcached.php');
+                if ( !class_exists('UNICACHE_MemcachedCache', false) )
+                    require_once(dirname(__FILE__).'/adapters/UnicacheMemcached.php');
                 if ( !UNICACHE_MemcachedCache::isSupported() )
                 {
-                    throw new \Exception('UNICACHE: Cache "'.$backend.'" is NOT supported!');
+                    throw new \RunTimeException('UNICACHE: Cache "'.$backend.'" is NOT supported!');
                 }
                 else
                 {
@@ -97,10 +102,11 @@ class UNICACHE_Factory
                 }
                 break;
             case 'REDIS': 
-                require_once(dirname(__FILE__).'/adapters/UnicacheRedis.php');
+                if ( !class_exists('UNICACHE_RedisCache', false) )
+                    require_once(dirname(__FILE__).'/adapters/UnicacheRedis.php');
                 if ( !UNICACHE_RedisCache::isSupported() )
                 {
-                    throw new \Exception('UNICACHE: Cache "'.$backend.'" is NOT supported!');
+                    throw new \RunTimeException('UNICACHE: Cache "'.$backend.'" is NOT supported!');
                 }
                 else
                 {
@@ -110,10 +116,11 @@ class UNICACHE_Factory
                 break;
             default: 
                 // default in-memory cache
-                require_once(dirname(__FILE__).'/adapters/UnicacheMemory.php');
+                if ( !class_exists('UNICACHE_MemoryCache', false) )
+                    require_once(dirname(__FILE__).'/adapters/UnicacheMemory.php');
                 if ( !UNICACHE_MemoryCache::isSupported() )
                 {
-                    throw new \Exception('UNICACHE: Cache "MEMORY" is NOT supported!');
+                    throw new \RunTimeException('UNICACHE: Cache "MEMORY" is NOT supported!');
                 }
                 else
                 {
