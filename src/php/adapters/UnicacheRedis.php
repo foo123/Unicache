@@ -1,4 +1,5 @@
 <?php
+
 require_once(dirname(__FILE__).'/drivers/redis.php');
 
 class UNICACHE_RedisCache extends UNICACHE_Cache
@@ -8,19 +9,19 @@ class UNICACHE_RedisCache extends UNICACHE_Cache
         //return extension_loaded('redis');
         return true;
     }
-    
+
     // Lightweight Redis client
     private $redis;
 
     public function __construct()
     {
     }
-    
+
     public function __destruct()
     {
         $this->redis = null;
     }
-    
+
     public function put( $key, $data, $ttl )
     {
         $data = serialize(array(time()+(int)$ttl, $data));
@@ -58,9 +59,15 @@ class UNICACHE_RedisCache extends UNICACHE_Cache
         return true;
     }
 
+    public function gc( $maxlifetime )
+    {
+        // handled automatically
+        return true;
+    }
+
     public function server( $host, $port=6379 )
     {
         $this->redis = new redis_cli( $host, $port );
         return $this;
     }
-} 
+}

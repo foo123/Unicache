@@ -7,7 +7,7 @@ class UNICACHE_MemcachedCache extends UNICACHE_Cache
         return (extension_loaded('memcached') || extension_loaded('memcache'));
         //return class_exists('Memcached', false) || class_exists('Memcache', false);
     }
-    
+
     // Memcache object
     private $connection;
 
@@ -36,7 +36,7 @@ class UNICACHE_MemcachedCache extends UNICACHE_Cache
         }
         $this->connection = null;
     }
-    
+
     public function put( $key, $data, $ttl )
     {
         if (get_class($this->connection) === 'Memcached')
@@ -98,7 +98,7 @@ class UNICACHE_MemcachedCache extends UNICACHE_Cache
                 }
                 return true;
             }
-            
+
             // Memcached
             elseif ( get_class($this->connection) === 'Memcached' )
             {
@@ -113,8 +113,14 @@ class UNICACHE_MemcachedCache extends UNICACHE_Cache
                 return true;
             }
         }
-        
+
         return $this->connection->flush( );
+    }
+
+    public function gc( $maxlifetime )
+    {
+        // handled automatically
+        return true;
     }
 
     public function addServer( $host, $port=11211, $weight=10 )
@@ -129,4 +135,4 @@ class UNICACHE_MemcachedCache extends UNICACHE_Cache
         }
         return $this;
     }
-} 
+}

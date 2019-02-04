@@ -2,7 +2,7 @@
 
 __An agnostic, caching framework for PHP, Node/JS, Python__
 
-python,node implementations in progress..
+`python`,`node` implementations in progress..
 
 
 version 1.2.0
@@ -32,6 +32,7 @@ A demo is included with the package. One simply adds an include directive and ba
 
 ### Types of Caching Supported
 
+* In-Memeory caching (default)
 * File-based caching
 * APC
 * APCU
@@ -43,7 +44,7 @@ A demo is included with the package. One simply adds an include directive and ba
 
 ### TODO
 
-^ add node/js, python implementations
+^ add `node/js`, `python` implementations
 * add support for Redis [DONE]
 * add support for xCache [DONE]
 
@@ -53,7 +54,7 @@ A demo is included with the package. One simply adds an include directive and ba
 
 ### Notes
 
-Part of the code is based on code from:  http://www.rooftopsolutions.nl/blog/107
+Part of the code was originally based on code from:  http://www.rooftopsolutions.nl/blog/107
 
 
 *UNICACHE* is also part of PHP classes http://www.phpclasses.org/package/7530-PHP-Cache-data-in-files-APC-or-Memcached.html

@@ -6,8 +6,8 @@ class UNICACHE_MemoryCache extends UNICACHE_Cache
     {
         return true;
     }
-    
-    private $_cache;
+
+    protected $_cache;
 
     public function __construct()
     {
@@ -27,7 +27,7 @@ class UNICACHE_MemoryCache extends UNICACHE_Cache
     public function get( $key )
     {
         if ( !isset($this->_cache[$this->prefix.$key]) ) return false;
-        
+
         $data = $this->_cache[$this->prefix.$key];
         if ( !$data ) return false;
 
@@ -44,7 +44,36 @@ class UNICACHE_MemoryCache extends UNICACHE_Cache
 
     public function clear( )
     {
-        $this->_cache = array();
+        if ( !strlen($this->prefix) )
+        {
+            $this->_cache = array();
+        }
+        else
+        {
+            foreach($this->_cache as $key=>$data)
+            {
+                if ( 0===strpos($key, $this->prefix, 0) )
+                {
+                    unset($this->_cache[$key]);
+                }
+            }
+        }
         return true;
     }
-} 
+
+    public function gc( $maxlifetime )
+    {
+        $maxlifetime = (int)$maxlifetime;
+        $currenttime = time();
+        $l = strlen($this->prefix);
+        foreach($this->_cache as $key=>$data)
+        {
+            if ( !$l || 0===strpos($key, $this->prefix, 0) )
+            {
+                if ( $data[0]-$currenttime < $maxlifetime )
+                    unset($this->_cache[$key]);
+            }
+        }
+        return true;
+    }
+}

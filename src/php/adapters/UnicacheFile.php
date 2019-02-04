@@ -6,17 +6,17 @@ class UNICACHE_FileCache extends UNICACHE_Cache
     {
         return true;
     }
-    
+
     private $cachedir = '';
 
     public function __construct()
     {
     }
-    
+
     public function __destruct()
     {
     }
-    
+
     public function put( $key, $data, $ttl )
     {
         // Opening the file in read/write mode
@@ -41,15 +41,15 @@ class UNICACHE_FileCache extends UNICACHE_Cache
         $filename = $this->getFileName($key);
         if (!file_exists($filename)) return false;
         $ch = fopen($filename,'r');
-         
+
         if (!$ch) return false;
-         
+
         // Getting a shared lock
         flock($ch,LOCK_SH);
-         
+
         $data = (string)fread($ch, filesize($filename));
         fclose($ch);
-         
+
         $data = @unserialize($data);
         if (!$data)
         {
@@ -74,7 +74,7 @@ class UNICACHE_FileCache extends UNICACHE_Cache
         else
             return false;
     }
-     
+
     public function clear( )
     {
         /*if ($handle = opendir($this->cachedir))
@@ -99,7 +99,31 @@ class UNICACHE_FileCache extends UNICACHE_Cache
         }
         return true;
     }
-     
+
+    public function gc( $maxlifetime )
+    {
+        $files = glob($this->cachedir . DIRECTORY_SEPARATOR . $this->prefix . '*');
+        if ( !empty($files) )
+        {
+            $currenttime = time();
+            $maxlifetime = (int)$maxlifetime;
+            foreach((array)$files as $file)
+            {
+                if( is_file($file) )
+                {
+                    $mtime = filemtime($file);
+                    if ( false===$mtime ) continue;
+                    if ($mtime+$maxlifetime < $currenttime )
+                    {
+                        // expired, delete
+                        @unlink($file);
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     public function setCacheDir( $dir )
     {
         $this->cachedir = rtrim((string)$dir, '/\\');
@@ -112,4 +136,4 @@ class UNICACHE_FileCache extends UNICACHE_Cache
     {
         return $this->cachedir . DIRECTORY_SEPARATOR . $this->prefix . md5($key);
     }
-} 
+}

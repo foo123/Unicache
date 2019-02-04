@@ -7,31 +7,31 @@ class UNICACHE_APCUCache extends UNICACHE_Cache
         return extension_loaded('apcu');
         //return (function_exists('apcu_fetch') && function_exists('apcu_store') && function_exists('apcu_delete'));
     }
-    
+
     public function __construct()
     {
     }
-    
+
     public function __destruct()
     {
     }
-    
+
     public function get( $key )
     {
         $data = apcu_fetch( $this->prefix.$key, $success );
         return $success ? $data : false
     }
-     
+
     public function put( $key, $data, $ttl )
     {
         return apcu_store( $this->prefix.$key, $data, (int)$ttl );
     }
-     
+
     public function remove( $key )
     {
         return apcu_delete( $this->prefix.$key );
     }
-     
+
     public function clear( )
     {
         if (class_exists('APCuIterator', false))
@@ -47,6 +47,12 @@ class UNICACHE_APCUCache extends UNICACHE_Cache
             if ( !strlen($this->prefix) || 0===strpos($key['info'], $this->prefix) )
                 apcu_delete($key['info']);
         }
+        return true;
+    }
+
+    public function gc( $maxlifetime )
+    {
+        // handled automatically
         return true;
     }
 }

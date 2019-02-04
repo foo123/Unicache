@@ -12,11 +12,12 @@ if ( !class_exists('UNICACHE_Cache', false) )
 {
 abstract class UNICACHE_Cache
 {
-    abstract function get( $key );
-    abstract function put( $key, $data, $ttl );
-    abstract function remove( $key );
-    abstract function clear( );
-    
+    abstract public function get( $key );
+    abstract public function put( $key, $data, $ttl );
+    abstract public function remove( $key );
+    abstract public function clear( );
+    abstract public function gc( $maxlifetime );
+
     protected $prefix = '';
     public function setPrefix( $prefix )
     {
@@ -28,15 +29,15 @@ abstract class UNICACHE_Cache
 class UNICACHE_Factory
 {
     const VERSION = '1.2.0';
-    
+
     public static function getCache( $config )
     {
         $backend = isset($config['cacheType']) ? strtoupper((string)$config['cacheType']) : 'MEMORY';
         $cache = null;
-        
+
         switch( $backend )
         {
-            case 'FILE': 
+            case 'FILE':
                 if ( !class_exists('UNICACHE_FileCache', false) )
                     require_once(dirname(__FILE__).'/adapters/UnicacheFile.php');
                 if ( !UNICACHE_FileCache::isSupported() )
@@ -49,7 +50,7 @@ class UNICACHE_Factory
                     $cache->setCacheDir( $config['FILE']['cacheDir'] );
                 }
                 break;
-            case 'APC': 
+            case 'APC':
                 if ( !class_exists('UNICACHE_APCCache', false) )
                     require_once(dirname(__FILE__).'/adapters/UnicacheApc.php');
                 if ( !UNICACHE_APCCache::isSupported() )
@@ -61,7 +62,7 @@ class UNICACHE_Factory
                     $cache = new UNICACHE_APCCache();
                 }
                 break;
-            case 'APCU': 
+            case 'APCU':
                 if ( !class_exists('UNICACHE_APCUCache', false) )
                     require_once(dirname(__FILE__).'/adapters/UnicacheApcu.php');
                 if ( !UNICACHE_APCUCache::isSupported() )
@@ -73,7 +74,7 @@ class UNICACHE_Factory
                     $cache = new UNICACHE_APCUCache();
                 }
                 break;
-            case 'XCACHE': 
+            case 'XCACHE':
                 if ( !class_exists('UNICACHE_XCache', false) )
                     require_once(dirname(__FILE__).'/adapters/UnicacheXCache.php');
                 if ( !UNICACHE_XCache::isSupported() )
@@ -85,7 +86,7 @@ class UNICACHE_Factory
                     $cache = new UNICACHE_XCache();
                 }
                 break;
-            case 'MEMCACHED': 
+            case 'MEMCACHED':
                 if ( !class_exists('UNICACHE_MemcachedCache', false) )
                     require_once(dirname(__FILE__).'/adapters/UnicacheMemcached.php');
                 if ( !UNICACHE_MemcachedCache::isSupported() )
@@ -101,7 +102,7 @@ class UNICACHE_Factory
                     }
                 }
                 break;
-            case 'REDIS': 
+            case 'REDIS':
                 if ( !class_exists('UNICACHE_RedisCache', false) )
                     require_once(dirname(__FILE__).'/adapters/UnicacheRedis.php');
                 if ( !UNICACHE_RedisCache::isSupported() )
@@ -114,7 +115,7 @@ class UNICACHE_Factory
                     $cache->server( $config['REDIS']['server']['host'], $config['REDIS']['server']['port'] );
                 }
                 break;
-            default: 
+            default:
                 // default in-memory cache
                 if ( !class_exists('UNICACHE_MemoryCache', false) )
                     require_once(dirname(__FILE__).'/adapters/UnicacheMemory.php');
