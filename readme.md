@@ -2,6 +2,17 @@
 
 __An agnostic, caching framework for PHP, Node/JS, Python__
 
+```text
+ ____ ___      .__                     .__            
+|    |   \____ |__| ____ _____    ____ |  |__   ____  
+|    |   /    \|  |/ ___\\__  \ _/ ___\|  |  \_/ __ \ 
+|    |  /   |  \  \  \___ / __ \\  \___|   Y  \  ___/ 
+|______/|___|  /__|\___  >____  /\___  >___|  /\___  >
+             \/        \/     \/     \/     \/     \/ 
+```
+Logo Ascii Art by [Text-to-Ascii Art Generator](http://patorjk.com/software/taag/#p=display&f=Graffiti&t=Unicache)
+
+
 `python` implementation in progress..
 
 
