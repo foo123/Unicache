@@ -46,7 +46,7 @@ A demo is included with the package. One simply adds an include directive and ba
 
 ### TODO
 
-^ add `python` implementations
+* add `python` implementations
 * add support for Redis [DONE]
 * add support for xCache [DONE]
 
