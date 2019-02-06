@@ -51,13 +51,8 @@ class UNICACHE_FileCache extends UNICACHE_Cache
         fclose($ch);
 
         $data = @unserialize($data);
-        if (!$data)
-        {
-            @unlink($filename);
-            return false;
-        }
 
-        if (time() > $data[0])
+        if (!$data || time() > $data[0])
         {
             // Unlinking when the file was expired
             @unlink($filename);

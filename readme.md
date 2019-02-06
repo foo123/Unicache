@@ -2,7 +2,7 @@
 
 __An agnostic, caching framework for PHP, Node/JS, Python__
 
-`python`,`node` implementations in progress..
+`python` implementation in progress..
 
 
 version 1.2.0
@@ -19,6 +19,8 @@ version 1.2.0
 
 ### How to Use
 
+`PHP`
+
 This is a caching framework for applications that is agnostic and total.
 
 This means that one can use it easily in her web applications that use any given framework or not use any framework at all.  
@@ -32,19 +34,19 @@ A demo is included with the package. One simply adds an include directive and ba
 
 ### Types of Caching Supported
 
-* In-Memeory caching (default)
-* File-based caching
-* APC
-* APCU
-* XCache
-* Memcached
-* Redis
+* In-Memory caching (default) `PHP`+`Node`
+* File-based caching `PHP`+`Node`
+* APC `PHP` only
+* APCU `PHP` only
+* XCache `PHP` only
+* Memcached `PHP`  (requires `Memcache` or `Memcached` extension) + `Node` (requires [`node-memcached`](https://github.com/3rd-Eden/memcached) module, in progress)
+* Redis `PHP`+`Node` (requires [`node-redis`](https://github.com/NodeRedis/node_redis) module, in progress)
 * it is very easy to extend to other methods as well.
 
 
 ### TODO
 
-^ add `node/js`, `python` implementations
+^ add `python` implementations
 * add support for Redis [DONE]
 * add support for xCache [DONE]
 
@@ -54,7 +56,7 @@ A demo is included with the package. One simply adds an include directive and ba
 
 ### Notes
 
-Part of the code was originally based on code from:  http://www.rooftopsolutions.nl/blog/107
+Part of the (`php`) code was originally based on code from:  http://www.rooftopsolutions.nl/blog/107
 
 
 *UNICACHE* is also part of PHP classes http://www.phpclasses.org/package/7530-PHP-Cache-data-in-files-APC-or-Memcached.html

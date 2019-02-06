@@ -29,9 +29,12 @@ class UNICACHE_MemoryCache extends UNICACHE_Cache
         if ( !isset($this->_cache[$this->prefix.$key]) ) return false;
 
         $data = $this->_cache[$this->prefix.$key];
-        if ( !$data ) return false;
 
-        if ( time() > $data[0] ) return false;
+        if ( !$data || time() > $data[0] )
+        {
+            unset($this->_cache[$this->prefix.$key]);
+            return false;
+        }
         return $data[1];
     }
 
