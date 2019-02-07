@@ -45,13 +45,13 @@ A demo is included with the package. One simply adds an include directive and ba
 
 ### Types of Caching Supported
 
-* In-Memory caching (default) `PHP`+`Node`
-* File-based caching `PHP`+`Node`
-* APC `PHP` only
-* APCU `PHP` only
-* XCache `PHP` only
-* Memcached `PHP`  (requires `Memcache` or `Memcached` extension) + `Node` (requires [`node-memcached`](https://github.com/3rd-Eden/memcached) module, in progress)
-* Redis `PHP`+`Node` (requires [`node-redis`](https://github.com/NodeRedis/node_redis) module)
+* In-Memory caching (default) **`PHP`** + **`Node`**
+* File-based caching **`PHP`** + **`Node`**
+* APC **`PHP`** only
+* APCU **`PHP`** only
+* XCache **`PHP`** only
+* Memcached **`PHP`**  (requires `Memcache` or `Memcached` extension) + **`Node`** (requires [`node-memcached`](https://github.com/3rd-Eden/memcached) module, in progress)
+* Redis **`PHP`** + **`Node`** (requires [`node-redis`](https://github.com/NodeRedis/node_redis) module)
 * it is very easy to extend to other methods as well.
 
 
@@ -60,6 +60,7 @@ A demo is included with the package. One simply adds an include directive and ba
 * add `python` implementations
 * add support for Redis [DONE]
 * add support for xCache [DONE]
+* `node.js` cache manipulation methods use standard callbacks (i.e as last argument w/ signature: `function(err,result)`) [DONE] and can be *"promisified"* if wished so very easily
 
 
 ### ChangeLog

@@ -26,7 +26,25 @@ UNICACHE.Cache[PROTO] = {
 
     constructor: UNICACHE.Cache,
     
-    // abstract methods need implementation
+    dispose: function( ) {
+        return this;
+    },
+    
+    supportsSync: function( ) {
+        // whether this cache type supports sync operations
+        // else a callback needs to be provided (as last argument in standard manner)
+        return false;
+    },
+    
+    prefix: '',
+    setPrefix: function( prefix ) {
+        this.prefix = !!prefix ? (''+prefix) : '';
+        return this;
+    },
+
+    // NOTE: All following cache manipulation methods can be "promisified" if wanted
+    // since they use callbacks in standard manner i.e as last arguments with signature: function(err, result)
+    // abstract methods, need implementation
     get: function( key, cb ){
         throw NotImplemented;
     },
@@ -41,22 +59,6 @@ UNICACHE.Cache[PROTO] = {
     },
     gc: function( maxlifetime, cb ){
         throw NotImplemented;
-    },
-
-    supportsSync: function( ) {
-        // whether this cache type supports sync operations
-        // else a callback needs to be provided (as last argument)
-        return false;
-    },
-    
-    prefix: '',
-    setPrefix: function( prefix ) {
-        this.prefix = !!prefix ? (''+prefix) : '';
-        return this;
-    },
-
-    dispose: function( ) {
-        return this;
     }
 };
 

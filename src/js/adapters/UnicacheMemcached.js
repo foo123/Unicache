@@ -10,7 +10,7 @@ module.exports = function( UNICACHE ) {
         MemCached = null;
     }
 
-    var MemcachedCache = UNICACHE.MemcachedCache = function( ) { 
+    var MemcachedCache = UNICACHE.MemcachedCache = function( ) {
         this.connection = null;
         this.servers = 'localhost:11211';
         this.options = null;
@@ -57,7 +57,7 @@ module.exports = function( UNICACHE ) {
     MemcachedCache[PROTO].put = function( key, data, ttl, cb ) {
         ttl = +ttl;
         this.connect().connection.set(this.prefix+key, _.serialize([_.time()+ttl, data]), ttl, function(err, res){
-            if ( 'function' === typeof cb ) cb(err ? false : true);
+            if ( 'function' === typeof cb ) cb(err, res);
         });
     };
 
@@ -65,18 +65,18 @@ module.exports = function( UNICACHE ) {
         this.connect().connection.get(this.prefix+key, function(err, data){
             if ( err || !data )
             {
-                cb(false);
+                cb(err, false);
             }
             else
             {
                 data = _.unserialize(data);
                 if ( !data || _.time() > data[0] )
                 {
-                    cb(false);
+                    cb(null, false);
                 }
                 else
                 {
-                    cb(data[1]);
+                    cb(null, data[1]);
                 }
             }
         });
@@ -84,19 +84,18 @@ module.exports = function( UNICACHE ) {
 
     MemcachedCache[PROTO].remove = function( key, cb ) {
         this.connect().connection.del(this.prefix+key, function(err, res){
-            if ( 'function' === typeof cb ) cb(err ? false : true);
+            if ( 'function' === typeof cb ) cb(err, res);
         });
     };
 
     MemcachedCache[PROTO].clear = function( cb ) {
-        //this.connect();
         // TODO
+        if ( 'function' === typeof cb ) setTimeout(function(){cb(null, true);}, 10);
     };
 
     MemcachedCache[PROTO].gc = function( maxlifetime, cb ) {
         // handled automatically
-        //this.connect();
-        if ( 'function' === typeof cb ) setTimeout(function(){cb(true);}, 100);
+        if ( 'function' === typeof cb ) setTimeout(function(){cb(null, true);}, 10);
     };
 
     return MemcachedCache;

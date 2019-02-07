@@ -26,7 +26,7 @@ module.exports = function( UNICACHE ) {
         if ('function' === typeof cb )
         {
             fs.writeFile(this.getFileName(key), _.serialize([_.time()+ttl,data]), {encoding:this.encoding}, function(err){
-                cb(err ? false : true);
+                cb(err, err ? false : true);
             });
         }
         else
@@ -44,7 +44,7 @@ module.exports = function( UNICACHE ) {
             fs.readFile(file, {encoding:this.encoding}, function(err, data){
                 if ( err || !data )
                 {
-                    cb(false);
+                    cb(err, false);
                 }
                 else
                 {
@@ -54,11 +54,11 @@ module.exports = function( UNICACHE ) {
                     {
                         // Unlinking when the file was expired
                         fs.unlink(file);
-                        cb(false);
+                        cb(null, false);
                     }
                     else
                     {
-                        cb(data[1]);
+                        cb(null, data[1]);
                     }
                 }
             });
@@ -84,7 +84,7 @@ module.exports = function( UNICACHE ) {
         if ( 'function' === typeof cb )
         {
             fs.unlink(filename, function(err){
-                cb(err ? false : true);
+                cb(err, err ? false : true);
             });
         }
         else
@@ -103,7 +103,7 @@ module.exports = function( UNICACHE ) {
                 if ( err || !files || !files.length )
                 {
                     // return true with a small delay to finish all files
-                    setTimeout(function(){cb(true);}, 10);
+                    setTimeout(function(){cb(err, err ? false : true);}, 10);
                     return;
                 }
                 var pl = self.prefix.length, filename, file, i, l;
@@ -124,7 +124,7 @@ module.exports = function( UNICACHE ) {
                     })(file));
                 }
                 // return true with a small delay to finish all files
-                setTimeout(function(){cb(true);}, 10);
+                setTimeout(function(){cb(null, true);}, 10);
             });
         }
         else
@@ -179,7 +179,7 @@ module.exports = function( UNICACHE ) {
         if ( 'function' === typeof cb )
         {
             // return true with a small delay to finish all files
-            setTimeout(function(){cb(true);}, 100);
+            setTimeout(function(){cb(null, true);}, 100);
         }
         else
         {
@@ -203,6 +203,6 @@ module.exports = function( UNICACHE ) {
     FileCache[PROTO].getFileName = function( key ) {
         return this.cachedir + '/' + this.prefix + _.md5(key);
     };
-    
+
     return FileCache;
 };

@@ -27,7 +27,7 @@ module.exports = function( UNICACHE ) {
         }
         return this;
     };
-    
+
     RedisCache[PROTO].dispose = function( ) {
         if ( this.redis )
         {
@@ -36,7 +36,7 @@ module.exports = function( UNICACHE ) {
         }
         return this;
     };
-    
+
     RedisCache[PROTO].setOptions = function( options ) {
         this.options = options || this.options;
         return this;
@@ -52,7 +52,7 @@ module.exports = function( UNICACHE ) {
             .set(this.prefix+key, _.serialize([_.time()+ttl, data]))
             .expire(this.prefix+key, ttl)
             .exec(function(err, res){
-                if ( 'function' === typeof cb ) cb(err ? false : true);
+                if ( 'function' === typeof cb ) cb(err, res);
             });
     };
 
@@ -60,18 +60,18 @@ module.exports = function( UNICACHE ) {
         this.connect().redis.get(this.prefix+key, function(err, data){
             if ( err || !data )
             {
-                cb(false);
+                cb(err, false);
             }
             else
             {
                 data = _.unserialize(data);
                 if ( !data || _.time() > data[0] )
                 {
-                    cb(false);
+                    cb(null, false);
                 }
                 else
                 {
-                    cb(data[1]);
+                    cb(null, data[1]);
                 }
             }
         });
@@ -79,7 +79,7 @@ module.exports = function( UNICACHE ) {
 
     RedisCache[PROTO].remove = function( key, cb ) {
         this.connect().redis.del(this.prefix+key, function(err, res){
-            if ( 'function' === typeof cb ) cb(err ? false : true);
+            if ( 'function' === typeof cb ) cb(err, res);
         });
     };
 
@@ -88,7 +88,7 @@ module.exports = function( UNICACHE ) {
         this.connect().redis.keys(this.prefix+'*', function(err, keys){
             if ( err || !keys || !keys.length )
             {
-                if ( 'function' === typeof cb ) cb(err ? false : true);
+                if ( 'function' === typeof cb ) cb(err, err ? false : true);
                 return;
             }
             var multi = self.redis.multi();
@@ -97,15 +97,14 @@ module.exports = function( UNICACHE ) {
                 multi.del(keys[i]);
             }
             multi.exec(function(err, res){
-                if ( 'function' === typeof cb ) cb(true);
+                if ( 'function' === typeof cb ) cb(err, res);
             });
         });
     };
 
     RedisCache[PROTO].gc = function( maxlifetime, cb ) {
         // handled automatically
-        //this.connect();
-        if ( 'function' === typeof cb ) setTimeout(function(){cb(true);}, 100);
+        if ( 'function' === typeof cb ) setTimeout(function(){cb(null, true);}, 10);
     };
 
     return RedisCache;
