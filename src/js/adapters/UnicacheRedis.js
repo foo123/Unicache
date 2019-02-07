@@ -53,7 +53,8 @@ module.exports = function( UNICACHE ) {
             .expire(this.prefix+key, ttl)
             .exec(function(err, res){
                 if ( 'function' === typeof cb ) cb(err, res);
-            });
+            })
+        ;
     };
 
     RedisCache[PROTO].get = function( key, cb ) {
@@ -78,13 +79,14 @@ module.exports = function( UNICACHE ) {
     };
 
     RedisCache[PROTO].remove = function( key, cb ) {
-        this.connect().redis.del(this.prefix+key, function(err, res){
+        this.connect().redis.unlink(this.prefix+key, function(err, res){
             if ( 'function' === typeof cb ) cb(err, res);
         });
     };
 
     RedisCache[PROTO].clear = function( cb ) {
         var self = this;
+        // consider using SCAN command to retrieve keys by prefix for `clear` method
         this.connect().redis.keys(this.prefix+'*', function(err, keys){
             if ( err || !keys || !keys.length )
             {
@@ -94,7 +96,7 @@ module.exports = function( UNICACHE ) {
             var multi = self.redis.multi();
             for(var i=0,l=keys.length; i<l; i++)
             {
-                multi.del(keys[i]);
+                multi.unlink(keys[i]);
             }
             multi.exec(function(err, res){
                 if ( 'function' === typeof cb ) cb(err, res);

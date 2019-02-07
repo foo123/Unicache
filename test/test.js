@@ -17,8 +17,10 @@ var cache = UNICACHE.Factory.getCache(config);
 
 cache.put('key', 'val', 10, function(err, result){
     if ( err ) throw err;
-    cache.get('key', function(err, val){
-        if ( err ) throw err;
-        console.log(['val', val]);
-    });
+    setTimeout(function(){
+        cache.get('key', function(err, val){
+            if ( err ) throw err;
+            console.log(['val', val]);
+        });
+    }, 2000);
 });

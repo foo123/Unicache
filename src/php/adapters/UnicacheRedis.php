@@ -33,10 +33,9 @@ class UNICACHE_RedisCache extends UNICACHE_Cache
         $data = $this->redis->cmd('GET', $this->prefix.$key)->get();
         if ( !$data ) return false;
         $data = @unserialize($data);
-        if ( !$data ) return false;
-        if ( time() > $data[0] )
+        if ( !$data || time() > $data[0] )
         {
-            $this->redis->cmd('DEL', $this->prefix.$key)->set();
+            //$this->redis->cmd('UNLINK', $this->prefix.$key)->set();
             return false;
         }
         return $data[1];
@@ -44,16 +43,17 @@ class UNICACHE_RedisCache extends UNICACHE_Cache
 
     public function remove( $key )
     {
-        return $this->redis->cmd('DEL', $this->prefix.$key)->set();
+        return $this->redis->cmd('UNLINK', $this->prefix.$key)->set();
     }
 
     public function clear( )
     {
+        // consider using SCAN command to retrieve keys by prefix for `clear` method
         $keys = $this->redis->cmd('KEYS', $this->prefix.'*')->get();
         if ( !$keys ) return true;
         foreach($keys as $key)
         {
-            $this->redis->cmd('DEL', $key);
+            $this->redis->cmd('UNLINK', $key);
         }
         $this->redis->set();
         return true;

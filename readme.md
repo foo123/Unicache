@@ -48,8 +48,8 @@ A demo is included with the package. One simply adds an include directive and ba
 * In-Memory caching (default) **`PHP`** + **`Node`**
 * File-based caching **`PHP`** + **`Node`**
 * APC **`PHP`** only
-* APCU **`PHP`** only
-* XCache **`PHP`** only
+* APCU **`PHP`** only (requires `apcu` extension)
+* XCache **`PHP`** only (requires `xcache` extension)
 * Memcached **`PHP`**  (requires `Memcache` or `Memcached` extension) + **`Node`** (requires [`node-memcached`](https://github.com/3rd-Eden/memcached) module, in progress)
 * Redis **`PHP`** + **`Node`** (requires [`node-redis`](https://github.com/NodeRedis/node_redis) module)
 * it is very easy to extend to other methods as well.
