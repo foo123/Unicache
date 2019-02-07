@@ -1,38 +1,37 @@
-!function( root, name, factory ){
-"use strict";
-if ( ('object'===typeof module)&&module.exports ) /* CommonJS */
-    (module.$deps = module.$deps||{}) && (module.exports = module.$deps[name] = factory.call(root));
-else if ( ('function'===typeof define)&&define.amd&&('function'===typeof require)&&('function'===typeof require.specified)&&require.specified(name) /*&& !require.defined(name)*/ ) /* AMD */
-    define(name,['module'],function(module){factory.moduleUri = module.uri; return factory.call(root);});
-else if ( !(name in root) ) /* Browser/WebWorker/.. */
-    (root[name] = factory.call(root)||1)&&('function'===typeof(define))&&define.amd&&define(function(){return root[name];} );
-}(  /* current root */          this,
-    /* module name */           "UNICACHE_FILE",
-    /* module factory */        function ModuleFactory__UNICACHE_FILE( undef ){
 "use strict";
 
-return function( UNICACHE ) {
+module.exports = function( UNICACHE ) {
     var PROTO = 'prototype', _ = UNICACHE._, fs = require('fs');
 
     var FileCache = UNICACHE.FileCache = function( ) { };
+
+    // extend UNICACHE.Cache class
+    FileCache[PROTO] = Object.create(UNICACHE.Cache[PROTO]);
 
     FileCache.isSupported = function( ) {
         return true;
     };
 
+    FileCache[PROTO].encoding = 'utf8';
     FileCache[PROTO].cachedir = '';
+
+    FileCache[PROTO].supportsSync = function( ) {
+        // can read/write/etc using sync operations as well
+        return true;
+    };
 
     FileCache[PROTO].put = function( key, data, ttl, cb ) {
         // write sync or async here
+        ttl = +ttl;
         if ('function' === typeof cb )
         {
-            fs.writeFile(this.getFileName(key), _.serialize([_.time()+ttl,data]), {encoding:'utf8'}, function(err){
+            fs.writeFile(this.getFileName(key), _.serialize([_.time()+ttl,data]), {encoding:this.encoding}, function(err){
                 cb(err ? false : true);
             });
         }
         else
         {
-            fs.writeFileSync(this.getFileName(key), _.serialize([_.time()+ttl,data]), {encoding:'utf8'});
+            fs.writeFileSync(this.getFileName(key), _.serialize([_.time()+ttl,data]), {encoding:this.encoding});
         }
     };
 
@@ -42,7 +41,7 @@ return function( UNICACHE ) {
 
         if ( 'function' === typeof cb )
         {
-            fs.readFile(file, {encoding:'utf8'}, function(err, data){
+            fs.readFile(file, {encoding:this.encoding}, function(err, data){
                 if ( err || !data )
                 {
                     cb(false);
@@ -66,7 +65,7 @@ return function( UNICACHE ) {
         }
         else
         {
-            var data = _.unserialize(''+fs.readFileSync(file, {encoding:'utf8'}));
+            var data = _.unserialize(''+fs.readFileSync(file, {encoding:this.encoding}));
 
             if ( !data || _.time() > data[0] )
             {
@@ -101,7 +100,12 @@ return function( UNICACHE ) {
         {
             var self = this;
             fs.readdir(this.cachedir, function(err, files){
-                if ( err || !files || !files.length ) return;
+                if ( err || !files || !files.length )
+                {
+                    // return true with a small delay to finish all files
+                    setTimeout(function(){cb(true);}, 10);
+                    return;
+                }
                 var pl = self.prefix.length, filename, file, i, l;
                 for(i=0,l=files.length; i<l; i++)
                 {
@@ -119,9 +123,9 @@ return function( UNICACHE ) {
                         };
                     })(file));
                 }
+                // return true with a small delay to finish all files
+                setTimeout(function(){cb(true);}, 10);
             });
-            // return true with a small delay to finish all files
-            setTimeout(function(){cb(true);}, 200);
         }
         else
         {
@@ -175,12 +179,17 @@ return function( UNICACHE ) {
         if ( 'function' === typeof cb )
         {
             // return true with a small delay to finish all files
-            setTimeout(function(){cb(true);}, 200);
+            setTimeout(function(){cb(true);}, 100);
         }
         else
         {
             return true;
         }
+    };
+
+    FileCache[PROTO].setEncoding = function( encoding ) {
+        this.encoding = !!encoding ? (''+encoding) : 'utf8';
+        return this;
     };
 
     FileCache[PROTO].setCacheDir = function( dir ) {
@@ -194,6 +203,6 @@ return function( UNICACHE ) {
     FileCache[PROTO].getFileName = function( key ) {
         return this.cachedir + '/' + this.prefix + _.md5(key);
     };
+    
+    return FileCache;
 };
-
-});

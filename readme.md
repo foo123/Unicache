@@ -51,7 +51,7 @@ A demo is included with the package. One simply adds an include directive and ba
 * APCU `PHP` only
 * XCache `PHP` only
 * Memcached `PHP`  (requires `Memcache` or `Memcached` extension) + `Node` (requires [`node-memcached`](https://github.com/3rd-Eden/memcached) module, in progress)
-* Redis `PHP`+`Node` (requires [`node-redis`](https://github.com/NodeRedis/node_redis) module, in progress)
+* Redis `PHP`+`Node` (requires [`node-redis`](https://github.com/NodeRedis/node_redis) module)
 * it is very easy to extend to other methods as well.
 
 

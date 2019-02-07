@@ -1,17 +1,6 @@
-!function( root, name, factory ){
-"use strict";
-if ( ('object'===typeof module)&&module.exports ) /* CommonJS */
-    (module.$deps = module.$deps||{}) && (module.exports = module.$deps[name] = factory.call(root));
-else if ( ('function'===typeof define)&&define.amd&&('function'===typeof require)&&('function'===typeof require.specified)&&require.specified(name) /*&& !require.defined(name)*/ ) /* AMD */
-    define(name,['module'],function(module){factory.moduleUri = module.uri; return factory.call(root);});
-else if ( !(name in root) ) /* Browser/WebWorker/.. */
-    (root[name] = factory.call(root)||1)&&('function'===typeof(define))&&define.amd&&define(function(){return root[name];} );
-}(  /* current root */          this,
-    /* module name */           "UNICACHE_MEMORY",
-    /* module factory */        function ModuleFactory__UNICACHE_MEMORY( undef ){
 "use strict";
 
-return function( UNICACHE ) {
+module.exports = function( UNICACHE ) {
     var PROTO = 'prototype', _ = UNICACHE._;
 
     var MemoryCache = UNICACHE.MemoryCache = function( ) {
@@ -29,6 +18,11 @@ return function( UNICACHE ) {
 
     MemoryCache[PROTO].dispose = function( ) {
         this._cache = null;
+    };
+
+    MemoryCache[PROTO].supportsSync = function( ) {
+        // can read/write/etc using sync operations as well
+        return true;
     };
 
     MemoryCache[PROTO].put = function( key, data, ttl, cb ) {
@@ -139,5 +133,3 @@ return function( UNICACHE ) {
 
     return MemoryCache;
 };
-
-});

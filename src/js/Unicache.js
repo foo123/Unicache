@@ -25,6 +25,7 @@ UNICACHE.Cache = function(){};
 UNICACHE.Cache[PROTO] = {
 
     constructor: UNICACHE.Cache,
+    
     // abstract methods need implementation
     get: function( key, cb ){
         throw NotImplemented;
@@ -42,9 +43,15 @@ UNICACHE.Cache[PROTO] = {
         throw NotImplemented;
     },
 
+    supportsSync: function( ) {
+        // whether this cache type supports sync operations
+        // else a callback needs to be provided (as last argument)
+        return false;
+    },
+    
     prefix: '',
     setPrefix: function( prefix ) {
-        this.prefix = !!prefix ? ''+prefix : '';
+        this.prefix = !!prefix ? (''+prefix) : '';
         return this;
     },
 
@@ -53,7 +60,12 @@ UNICACHE.Cache[PROTO] = {
     }
 };
 
-UNICACHE._ = {
+var _ = UNICACHE._ = {
+    ESC_RE: /([[\]().?/*{}+$^:\\])/g,
+    TRIM_RE: null,
+    LTRIM_RE: null,
+    RTRIM_RE: null,
+    
     time: function( ){
         return Math.floor(new Date().getTime() / 1000);
     },
@@ -64,33 +76,63 @@ UNICACHE._ = {
         return JSON.parse(data);
     },
     isset: function( o, k, strict ) {
-        var exists = !!(o && k && Object.prototype.hasOwnProperty.call(o, k));
+        var exists = !!(o && Object.prototype.hasOwnProperty.call(o, k));
         return true===strict ? exists && (null != o[k]) : exists;
     },
     md5: function( data ) {
         return require('crypto').createHash('md5').update(''+data).digest('hex');
     },
     trim: function(str, charlist) {
-      charlist = !charlist ? ' \\s\u00A0' : (charlist + '').replace(/([[\]().?/*{}+$^:])/g, '\\$1');
-      var re = new RegExp('^[' + charlist + ']+|[' + charlist + ']+$', 'g')
+      var re;
+      if ( 2>arguments.length )
+      {
+          if ( !this.TRIM_RE )
+              this.TRIM_RE = new RegExp('^[' + ' \\s\u00A0' + ']+|[' + ' \\s\u00A0' + ']+$', 'g');
+          re = this.TRIM_RE;
+      }
+      else
+      {
+          charlist = (''+charlist).replace(this.ESC_RE, '\\$1');
+          re = new RegExp('^[' + charlist + ']+|[' + charlist + ']+$', 'g');
+      }
       return ('' + str).replace(re, '')
     },
     ltrim: function(str, charlist) {
-      charlist = !charlist ? ' \\s\u00A0' : (charlist + '').replace(/([[\]().?/*{}+$^:])/g, '\\$1');
-      var re = new RegExp('^[' + charlist + ']+', 'g')
+      var re;
+      if ( 2>arguments.length )
+      {
+          if ( !this.LTRIM_RE )
+              this.LTRIM_RE = new RegExp('^[' + ' \\s\u00A0' + ']+', 'g');
+          re = this.LTRIM_RE;
+      }
+      else
+      {
+          charlist = (''+charlist).replace(this.ESC_RE, '\\$1');
+          re = new RegExp('^[' + charlist + ']+', 'g');
+      }
       return ('' + str).replace(re, '')
     },
     rtrim: function(str, charlist) {
-      charlist = !charlist ? ' \\s\u00A0' : (charlist + '').replace(/([[\]().?/*{}+$^:])/g, '\\$1');
-      var re = new RegExp('[' + charlist + ']+$', 'g')
+      var re;
+      if ( 2>arguments.length )
+      {
+          if ( !this.RTRIM_RE )
+              this.RTRIM_RE = new RegExp('[' + ' \\s\u00A0' + ']+$', 'g');
+          re = this.RTRIM_RE;
+      }
+      else
+      {
+          charlist = (''+charlist).replace(this.ESC_RE, '\\$1');
+          re = new RegExp('[' + charlist + ']+$', 'g');
+      }
       return ('' + str).replace(re, '')
     }
 };
 
 UNICACHE.Factory = function(){};
 UNICACHE.Factory.VERSION = VERSION;
-UNICACHE.Factory.getCache = function(config) {
-    var backend = !!config['cacheType'] ? config['cacheType'].toUpperCase() : 'MEMORY';
+UNICACHE.Factory.getCache = function( config ) {
+    var backend = _.isset(config, 'cacheType', true) ? (''+config['cacheType']).toUpperCase() : 'MEMORY';
     var cache = null;
 
     switch( backend )
@@ -105,7 +147,7 @@ UNICACHE.Factory.getCache = function(config) {
             else
             {
                 cache = new UNICACHE.FileCache();
-                cache.setCacheDir( config['FILE']['cacheDir'] );
+                cache.setEncoding( config['FILE']['encoding'] ).setCacheDir( config['FILE']['cacheDir'] );
             }
             break;
         case 'MEMCACHED':
@@ -118,14 +160,7 @@ UNICACHE.Factory.getCache = function(config) {
             else
             {
                 cache = new UNICACHE.MemcachedCache();
-                if ( config['MEMCACHED'] && config['MEMCACHED']['servers'] && config['MEMCACHED']['servers'].length )
-                {
-                    for(var srv,i=0,l=config['MEMCACHED']['servers'].length; i<l; i++)
-                    {
-                        srv = config['MEMCACHED']['servers'][i];
-                        cache.addServer( srv['host'], srv['port'], srv['weight'] );
-                    }
-                }
+                cache.setOptions( config['MEMCACHED']['options'] ).setServers( config['MEMCACHED']['servers'] );
             }
             break;
         case 'REDIS':
@@ -138,7 +173,7 @@ UNICACHE.Factory.getCache = function(config) {
             else
             {
                 cache = new UNICACHE.RedisCache();
-                cache.server( config['REDIS']['server']['host'], config['REDIS']['server']['port'] );
+                cache.options( config['REDIS']['options'] );
             }
             break;
         default:
@@ -155,7 +190,7 @@ UNICACHE.Factory.getCache = function(config) {
             }
             break;
     }
-    cache.setPrefix( !!config['prefix'] ? config['prefix'] : '' );
+    cache.setPrefix( _.isset(config, 'prefix', true) ? config['prefix'] : '' );
     return cache;
 };
 
