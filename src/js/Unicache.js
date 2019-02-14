@@ -59,6 +59,73 @@ UNICACHE.Cache[PROTO] = {
     },
     gc: function( maxlifetime, cb ){
         throw NotImplemented;
+    },
+    
+    // promisified methods
+    getPromise: function( key ){
+        var self = this;
+        if ( 'function' === typeof Promise )
+        {
+            return new Promise(function(resolve,reject){
+                self.get(key, function(err,res){
+                    if ( err ) reject(err);
+                    else resolve(res);
+                });
+            });
+        }
+        return null;
+    },
+    putPromise: function( key, data, ttl ){
+        var self = this;
+        if ( 'function' === typeof Promise )
+        {
+            return new Promise(function(resolve,reject){
+                self.put(key, data, ttl, function(err,res){
+                    if ( err ) reject(err);
+                    else resolve(res);
+                });
+            });
+        }
+        return null;
+    },
+    removePromise: function( key ){
+        var self = this;
+        if ( 'function' === typeof Promise )
+        {
+            return new Promise(function(resolve,reject){
+                self.remove(key, function(err,res){
+                    if ( err ) reject(err);
+                    else resolve(res);
+                });
+            });
+        }
+        return null;
+    },
+    clearPromise: function( ){
+        var self = this;
+        if ( 'function' === typeof Promise )
+        {
+            return new Promise(function(resolve,reject){
+                self.clear(function(err,res){
+                    if ( err ) reject(err);
+                    else resolve(res);
+                });
+            });
+        }
+        return null;
+    },
+    gcPromise: function( maxlifetime ){
+        var self = this;
+        if ( 'function' === typeof Promise )
+        {
+            return new Promise(function(resolve,reject){
+                self.gc(maxlifetime, function(err,res){
+                    if ( err ) reject(err);
+                    else resolve(res);
+                });
+            });
+        }
+        return null;
     }
 };
 

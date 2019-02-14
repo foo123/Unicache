@@ -43,6 +43,11 @@ The framework is configured by a config file which easily gets together all para
 A demo is included with the package. One simply adds an include directive and bang you have the most advanced caching.
 
 
+`Node.js`
+
+Supports both `node-style` callback-based methods (nodebacks) plus promise-based methods (if `Promises` are supported). Each method (i.e `get`, `put`, `remove`, `clear`, `gc`) has an associated method that returns a promise (i.e `getPromise`, `putPromise`, `removePromise`, `clearPromise`, `gcPromise`). Also some cache types (i.e memory-based and file-based) support `synchronous` operations as well (if no callback is provided synchronous processing takes place).
+
+
 ### Types of Caching Supported
 
 * In-Memory caching (default) **`PHP`** + **`Node`**

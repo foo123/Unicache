@@ -106,7 +106,7 @@ module.exports = function( UNICACHE ) {
 
     RedisCache[PROTO].gc = function( maxlifetime, cb ) {
         // handled automatically
-        if ( 'function' === typeof cb ) setTimeout(function(){cb(null, true);}, 10);
+        if ( 'function' === typeof cb ) cb(null, true);
     };
 
     return RedisCache;

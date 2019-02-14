@@ -27,7 +27,7 @@ module.exports = function( UNICACHE ) {
 
     MemoryCache[PROTO].put = function( key, data, ttl, cb ) {
         this._cache[this.prefix+key] = [_.time()+ttl,data];
-        if ( 'function' === typeof cb ) setTimeout(function(){cb(null, true);},10);
+        if ( 'function' === typeof cb ) cb(null, true);
     };
 
     MemoryCache[PROTO].get = function( key, cb ) {
@@ -52,7 +52,7 @@ module.exports = function( UNICACHE ) {
         }
         if ( 'function' === typeof cb )
         {
-            setTimeout(function(){cb(null, ret);},10);
+            cb(null, ret);
         }
         else
         {
@@ -73,7 +73,7 @@ module.exports = function( UNICACHE ) {
         }
         if ( 'function' === typeof cb )
         {
-            setTimeout(function(){cb(null, ret);},10);
+            cb(null, ret);
         }
         else
         {
@@ -99,7 +99,7 @@ module.exports = function( UNICACHE ) {
         }
         if ( 'function' === typeof cb )
         {
-            setTimeout(function(){cb(null, true);},10);
+            cb(null, true);
         }
         else
         {
@@ -123,7 +123,7 @@ module.exports = function( UNICACHE ) {
         }
         if ( 'function' === typeof cb )
         {
-            setTimeout(function(){cb(null, true);},10);
+            cb(null, true);
         }
         else
         {

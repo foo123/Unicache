@@ -90,12 +90,12 @@ module.exports = function( UNICACHE ) {
 
     MemcachedCache[PROTO].clear = function( cb ) {
         // TODO
-        if ( 'function' === typeof cb ) setTimeout(function(){cb(null, true);}, 10);
+        if ( 'function' === typeof cb ) cb(null, true);
     };
 
     MemcachedCache[PROTO].gc = function( maxlifetime, cb ) {
         // handled automatically
-        if ( 'function' === typeof cb ) setTimeout(function(){cb(null, true);}, 10);
+        if ( 'function' === typeof cb ) cb(null, true);
     };
 
     return MemcachedCache;

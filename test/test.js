@@ -15,12 +15,18 @@ var config = {
 
 var cache = UNICACHE.Factory.getCache(config);
 
-cache.put('key', 'val', 10, function(err, result){
-    if ( err ) throw err;
+cache.putPromise('key', 'val', 10)
+.then(function(result){
     setTimeout(function(){
-        cache.get('key', function(err, val){
-            if ( err ) throw err;
+        cache.getPromise('key')
+        .then(function(val){
             console.log(['val', val]);
+        })
+        .catch(function(err){
+            throw err;
         });
     }, 2000);
+})
+.catch(function(err){
+    throw err;
 });
