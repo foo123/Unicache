@@ -1,6 +1,6 @@
 # UNICACHE 
 
-__An agnostic, caching framework for PHP, Node/JS, Python__
+__An agnostic, caching framework for `Node.js`, `Browser`, `PHP` and `Python`__
 
 ```text
  ____ ___      .__                     .__            
@@ -50,6 +50,8 @@ Supports both `node-style` callback-based methods (nodebacks) plus promise-based
 
 ### Types of Caching Supported
 
+**server-side**
+
 * In-Memory caching (default) **`PHP`** + **`Node`**
 * File-based caching **`PHP`** + **`Node`**
 * APC **`PHP`** only
@@ -59,13 +61,24 @@ Supports both `node-style` callback-based methods (nodebacks) plus promise-based
 * Redis **`PHP`** + **`Node`** (requires [`node-redis`](https://github.com/NodeRedis/node_redis) module)
 * it is very easy to extend to other methods as well.
 
+**client-side, browser** (in progress)
+
+* In-Memory caching (default)
+* `Cookie`-based caching (in progress)
+* `LocalStorage` (in progress)
+* `SessionStorage` (in progress)
+* `WebSql`-based caching (in progress)
+* `IndexedDb`-based caching (in progress)
+* it is easy to extend to other methods as well.
+
 
 ### TODO
 
 * add `python` implementations
+* add client-side/browser caching implementations (in progress)
 * add support for Redis [DONE]
 * add support for xCache [DONE]
-* `node.js` cache manipulation methods use standard callbacks (i.e as last argument w/ signature: `function(err,result)`) [DONE] and can be *"promisified"* if wished so very easily
+* `node.js` cache manipulation methods use standard callbacks (i.e as last argument w/ signature: `function(err,result)`) [DONE] and also promises (via same method names with "`Promise`" suffix)
 
 
 ### ChangeLog

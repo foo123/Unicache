@@ -53,7 +53,7 @@ module.exports = function( UNICACHE ) {
                     if (!data || _.time() > data[0])
                     {
                         // Unlinking when the file was expired
-                        fs.unlink(file);
+                        fs.unlink(file, function(err){});
                         cb(null, false);
                     }
                     else
@@ -71,7 +71,7 @@ module.exports = function( UNICACHE ) {
             {
                 // Unlinking when the file was expired
                 // use async here as we do not need to wait, whenever it finishes it is fine
-                fs.unlink(file);
+                fs.unlink(file, function(err){});
                 return false;
             }
             return data[1];
@@ -118,7 +118,7 @@ module.exports = function( UNICACHE ) {
                             if ( !err && stat.isFile() )
                             {
                                 // delete
-                                fs.unlink(file);
+                                fs.unlink(file, function(err){});
                             }
                         };
                     })(file));
@@ -169,7 +169,7 @@ module.exports = function( UNICACHE ) {
                             if ( mtime+maxlifetime < currenttime )
                             {
                                 // expired, delete
-                                fs.unlink(file);
+                                fs.unlink(file, function(err){});
                             }
                         }
                     };

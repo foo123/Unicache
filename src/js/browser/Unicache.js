@@ -1,6 +1,6 @@
 /**
 *   Unicache,
-*   an agnostic caching framework for Node, PHP, Python
+*   an agnostic caching framework for Node.js, Browser, PHP, Python
 *
 *   @version: 1.2.0
 *   https://github.com/foo123/Unicache
@@ -13,7 +13,7 @@ else if ( ('function'===typeof define)&&define.amd&&('function'===typeof require
     define(name,['module'],function(module){factory.moduleUri = module.uri; return factory.call(root);});
 else if ( !(name in root) ) /* Browser/WebWorker/.. */
     (root[name] = factory.call(root)||1)&&('function'===typeof(define))&&define.amd&&define(function(){return root[name];} );
-}(  /* current root */          this,
+}(  /* current root */          'undefined' !== typeof self ? self : this,
     /* module name */           "UNICACHE",
     /* module factory */        function ModuleFactory__UNICACHE( undef ){
 "use strict";
@@ -148,9 +148,6 @@ var _ = UNICACHE._ = {
         var exists = !!(o && Object.prototype.hasOwnProperty.call(o, k));
         return true===strict ? exists && (null != o[k]) : exists;
     },
-    md5: function( data ) {
-        return require('crypto').createHash('md5').update(''+data).digest('hex');
-    },
     trim: function(str, charlist) {
       var re;
       if ( 2>arguments.length )
@@ -206,50 +203,59 @@ UNICACHE.Factory.getCache = function( config ) {
 
     switch( backend )
     {
-        case 'FILE':
-            if ( !UNICACHE.FileCache )
-                UNICACHE.FileCache = require(__dirname+'/adapters/UnicacheFile.js')(UNICACHE);
-            if ( !UNICACHE.FileCache.isSupported() )
+        case 'INDEXEDDB':
+            if ( !UNICACHE.IndexedDbCache || !UNICACHE.IndexedDbCache.isSupported() )
             {
                 throw new ReferenceError('UNICACHE: Cache "'+backend+'" is NOT supported!');
             }
             else
             {
-                cache = new UNICACHE.FileCache();
-                cache.setEncoding( config['FILE']['encoding'] ).setCacheDir( config['FILE']['cacheDir'] );
+                cache = new UNICACHE.IndexedDbCache();
             }
             break;
-        case 'MEMCACHED':
-            if ( !UNICACHE.MemcachedCache )
-                UNICACHE.MemcachedCache = require(__dirname+'/adapters/UnicacheMemcached.js')(UNICACHE);
-            if ( !UNICACHE.MemcachedCache.isSupported() )
+        case 'WEBSQL':
+            if ( !UNICACHE.WebSqlCache || !UNICACHE.WebSqlCache.isSupported() )
             {
                 throw new ReferenceError('UNICACHE: Cache "'+backend+'" is NOT supported!');
             }
             else
             {
-                cache = new UNICACHE.MemcachedCache();
-                cache.setOptions( config['MEMCACHED']['options'] ).setServers( config['MEMCACHED']['servers'] );
+                cache = new UNICACHE.WebSqlCache();
             }
             break;
-        case 'REDIS':
-            if ( !UNICACHE.RedisCache )
-                UNICACHE.RedisCache = require(__dirname+'/adapters/UnicacheRedis.js')(UNICACHE);
-            if ( !UNICACHE.RedisCache.isSupported() )
+        case 'SESSIONSTORAGE':
+            if ( !UNICACHE.SessionStorageCache || !UNICACHE.SessionStorageCache.isSupported() )
             {
                 throw new ReferenceError('UNICACHE: Cache "'+backend+'" is NOT supported!');
             }
             else
             {
-                cache = new UNICACHE.RedisCache();
-                cache.options( config['REDIS']['options'] );
+                cache = new UNICACHE.SessionStorageCache();
+            }
+            break;
+        case 'LOCALSTORAGE':
+            if ( !UNICACHE.LocalStorageCache || !UNICACHE.LocalStorageCache.isSupported() )
+            {
+                throw new ReferenceError('UNICACHE: Cache "'+backend+'" is NOT supported!');
+            }
+            else
+            {
+                cache = new UNICACHE.LocalStorageCache();
+            }
+            break;
+        case 'COOKIE':
+            if ( !UNICACHE.CookieCache || !UNICACHE.CookieCache.isSupported() )
+            {
+                throw new ReferenceError('UNICACHE: Cache "'+backend+'" is NOT supported!');
+            }
+            else
+            {
+                cache = new UNICACHE.CookieCache();
             }
             break;
         default:
             // default in-memory cache
-            if ( !UNICACHE.MemoryCache )
-                UNICACHE.MemoryCache = require(__dirname+'/adapters/UnicacheMemory.js')(UNICACHE);
-            if ( !UNICACHE.MemoryCache.isSupported() )
+            if ( !UNICACHE.MemoryCache || !UNICACHE.MemoryCache.isSupported() )
             {
                 throw new ReferenceError('UNICACHE: Cache "MEMORY" is NOT supported!');
             }
