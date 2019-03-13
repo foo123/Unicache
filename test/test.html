@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="../src/js/browser/Unicache.js"></script>
+<title>Unicache Browser test</title>
+</head>
+<body>
+<strong>Open browser Console!</strong>
+
+<script>
+var config = {
+    prefix: 'my',
+    cacheType: 'COOKIE'
+};
+var cache = UNICACHE.Factory.getCache(config);
+cache.getPromise('foo').then(function(val){
+    if ( val )
+    {
+        console.log('Foo already set');
+        console.log(val);
+    }
+    else
+    {
+        console.log('Foo NOT set');
+    }
+    return cache.putPromise('foo', 'bar', 3600).then(function(){
+        setTimeout(function(){
+            cache.getPromise('foo').then(function(val){
+                console.log(val);
+            });
+        }, 2000);
+    });
+}).catch(function(err){
+    console.error(err);
+    throw err;
+});
+</script>
+</body>
+</html>

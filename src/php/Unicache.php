@@ -1,7 +1,7 @@
 <?php
 /**
 *  Unicache
-*  An agnostic caching framework for PHP, Python, Node/JS
+*  An agnostic caching framework for PHP, Node.js, Browser, Python
 *
 *  @version: 1.2.0
 *  https://github.com/foo123/Unicache

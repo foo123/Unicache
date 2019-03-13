@@ -13,5 +13,4 @@ IndexedDbCache.isSupported = function( ) {
     return false;
 };
 
-
 }(UNICACHE);

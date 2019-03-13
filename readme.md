@@ -1,6 +1,6 @@
 # UNICACHE 
 
-__An agnostic, caching framework for `Node.js`, `Browser`, `PHP` and `Python`__
+__An agnostic, caching framework for `PHP`, `Node.js`, `Browser` and `Python`__
 
 ```text
  ____ ___      .__                     .__            
@@ -48,6 +48,11 @@ A demo is included with the package. One simply adds an include directive and ba
 Supports both `node-style` callback-based methods (nodebacks) plus promise-based methods (if `Promises` are supported). Each method (i.e `get`, `put`, `remove`, `clear`, `gc`) has an associated method that returns a promise (i.e `getPromise`, `putPromise`, `removePromise`, `clearPromise`, `gcPromise`). Also some cache types (i.e memory-based and file-based) support `synchronous` operations as well (if no callback is provided synchronous processing takes place).
 
 
+`Browser`, `Client-side`
+
+Supports both `node-style` callback-based methods (nodebacks) plus promise-based methods (if `Promises` are supported). Each method (i.e `get`, `put`, `remove`, `clear`, `gc`) has an associated method that returns a promise (i.e `getPromise`, `putPromise`, `removePromise`, `clearPromise`, `gcPromise`). Also some cache types (i.e memory-based, cookie-based, webStorage-based) support `synchronous` operations as well (if no callback is provided synchronous processing takes place).
+
+
 ### Types of Caching Supported
 
 **server-side**
@@ -59,26 +64,26 @@ Supports both `node-style` callback-based methods (nodebacks) plus promise-based
 * XCache **`PHP`** only (requires `xcache` extension)
 * Memcached **`PHP`**  (requires `Memcache` or `Memcached` extension) + **`Node`** (requires [`node-memcached`](https://github.com/3rd-Eden/memcached) module, in progress)
 * Redis **`PHP`** + **`Node`** (requires [`node-redis`](https://github.com/NodeRedis/node_redis) module)
-* it is very easy to extend to other methods as well.
+* it is easy to extend to other methods as well.
 
-**client-side, browser** (in progress)
+**client-side, browser**
 
 * In-Memory caching (default)
-* `Cookie`-based caching (in progress)
-* `LocalStorage` (in progress)
-* `SessionStorage` (in progress)
-* `WebSql`-based caching (in progress)
+* `Cookie`-based caching
+* `LocalStorage`
+* `SessionStorage`
 * `IndexedDb`-based caching (in progress)
+* `WebSql`-based caching (in progress)
 * it is easy to extend to other methods as well.
 
 
 ### TODO
 
 * add `python` implementations
-* add client-side/browser caching implementations (in progress)
+* add client-side/browser `indexedDb` and `webSql` caching implementations (in progress)
 * add support for Redis [DONE]
 * add support for xCache [DONE]
-* `node.js` cache manipulation methods use standard callbacks (i.e as last argument w/ signature: `function(err,result)`) [DONE] and also promises (via same method names with "`Promise`" suffix)
+* `node.js` and `browser` cache manipulation methods use standard callbacks (i.e as last argument w/ signature: `function(err,result)`) [DONE] and also promises (via same method names with "`Promise`" suffix)
 
 
 ### ChangeLog

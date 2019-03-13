@@ -1,9 +1,10 @@
 /**
-*   Unicache,
-*   an agnostic caching framework for Node.js, Browser, PHP, Python
+*  Unicache
+*  An agnostic caching framework for PHP, Node.js, Browser, Python
 *
-*   @version: 1.2.0
-*   https://github.com/foo123/Unicache
+*  @version: 1.2.0
+*  https://github.com/foo123/Unicache
+*
 **/
 !function( root, name, factory ){
 "use strict";

@@ -13,5 +13,4 @@ WebSqlCache.isSupported = function( ) {
     return false;
 };
 
-
 }(UNICACHE);

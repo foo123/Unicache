@@ -28,17 +28,18 @@ MemoryCache[PROTO].supportsSync = function( ) {
 MemoryCache[PROTO].put = function( key, data, ttl, cb ) {
     this._cache[this.prefix+key] = [_.time()+ttl,data];
     if ( 'function' === typeof cb ) cb(null, true);
+    return true;
 };
 
 MemoryCache[PROTO].get = function( key, cb ) {
-    var ret
+    var ret;
     if ( !_.isset(this._cache, this.prefix+key, true) )
     {
         ret = false;
     }
     else
     {
-        data = this._cache[this.prefix+key];
+        var data = this._cache[this.prefix+key];
 
         if ( !data || _.time() > data[0] )
         {
