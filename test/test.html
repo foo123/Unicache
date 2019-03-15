@@ -11,7 +11,7 @@
 <script>
 var config = {
     prefix: 'my',
-    cacheType: 'COOKIE'
+    cacheType: 'INDEXEDDB'
 };
 var cache = UNICACHE.Factory.getCache(config);
 cache.getPromise('foo').then(function(val){
@@ -28,6 +28,9 @@ cache.getPromise('foo').then(function(val){
         setTimeout(function(){
             cache.getPromise('foo').then(function(val){
                 console.log(val);
+            }).catch(function(err){
+                console.error(err);
+                throw err;
             });
         }, 2000);
     });
