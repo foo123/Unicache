@@ -73,7 +73,7 @@ class UNICACHE_MemoryCache extends UNICACHE_Cache
         {
             if ( !$l || 0===strpos($key, $this->prefix, 0) )
             {
-                if ( $data[0]-$currenttime < $maxlifetime )
+                if ( $data[0] < $currenttime-$maxlifetime )
                     unset($this->_cache[$key]);
             }
         }

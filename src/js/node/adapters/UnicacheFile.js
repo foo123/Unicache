@@ -151,7 +151,7 @@ module.exports = function( UNICACHE ) {
     FileCache[PROTO].gc = function( maxlifetime, cb ) {
         // use async here by default as we do not need to wait, whenever it finishes it is fine
         maxlifetime = +maxlifetime;
-        var self = this, currenttime = _.time();;
+        var self = this, currenttime = _.time();
         fs.readdir(this.cachedir, function(err, files){
             if ( err || !files || !files.length ) return;
             var pl = self.prefix.length, filename, file, i, l;
@@ -166,7 +166,7 @@ module.exports = function( UNICACHE ) {
                         if ( !err && stat.isFile() ) {
                             var mtime = stat.mtime;
                             if ( !mtime ) return;
-                            if ( mtime+maxlifetime < currenttime )
+                            if ( mtime < currenttime-maxlifetime )
                             {
                                 // expired, delete
                                 fs.unlink(file, function(err){});

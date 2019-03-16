@@ -41,7 +41,7 @@ module.exports = function( UNICACHE ) {
             this.connection.end();
             this.connection = null;
         }
-        return this;
+        return UNICACHE.Cache[PROTO].dispose.call(this);
     };
 
     MemcachedCache[PROTO].setOptions = function( options ) {
@@ -63,20 +63,23 @@ module.exports = function( UNICACHE ) {
 
     MemcachedCache[PROTO].get = function( key, cb ) {
         this.connect().connection.get(this.prefix+key, function(err, data){
-            if ( err || !data )
+            if ( 'function' === typeof cb )
             {
-                cb(err, false);
-            }
-            else
-            {
-                data = _.unserialize(data);
-                if ( !data || _.time() > data[0] )
+                if ( err || !data )
                 {
-                    cb(null, false);
+                    cb(err, false);
                 }
                 else
                 {
-                    cb(null, data[1]);
+                    data = _.unserialize(data);
+                    if ( !data || _.time() > data[0] )
+                    {
+                        cb(null, false);
+                    }
+                    else
+                    {
+                        cb(null, data[1]);
+                    }
                 }
             }
         });

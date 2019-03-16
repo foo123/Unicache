@@ -23,3 +23,9 @@ sleep(2);
 $val = $cache->get('key');
 
 print_r(array('val',$val));
+
+sleep(12);
+
+$val = $cache->get('key');
+
+print_r(array('val',$val));

@@ -110,6 +110,7 @@ CookieCache[PROTO]._cookie = null;
 
 CookieCache[PROTO].dispose = function( ) {
     this._cookie = null;
+    return UNICACHE.Cache[PROTO].dispose.call(this);
 };
 
 CookieCache[PROTO].supportsSync = function( ) {
@@ -208,7 +209,7 @@ CookieCache[PROTO].gc = function( maxlifetime, cb ) {
         if ( !pl || 0===key.indexOf(this.prefix) )
         {
             data = this._cookie[key];
-            if ( data[0]-currenttime < maxlifetime )
+            if ( data[0] < currenttime-maxlifetime )
             {
                 delete this._cookie[key];
                 removeCookie(key);

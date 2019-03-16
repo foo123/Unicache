@@ -34,7 +34,7 @@ module.exports = function( UNICACHE ) {
             this.redis.quit();
             this.redis = null;
         }
-        return this;
+        return UNICACHE.Cache[PROTO].dispose.call(this);
     };
 
     RedisCache[PROTO].setOptions = function( options ) {
@@ -59,20 +59,23 @@ module.exports = function( UNICACHE ) {
 
     RedisCache[PROTO].get = function( key, cb ) {
         this.connect().redis.get(this.prefix+key, function(err, data){
-            if ( err || !data )
+            if ( 'function' === typeof cb )
             {
-                cb(err, false);
-            }
-            else
-            {
-                data = _.unserialize(data);
-                if ( !data || _.time() > data[0] )
+                if ( err || !data )
                 {
-                    cb(null, false);
+                    cb(err, false);
                 }
                 else
                 {
-                    cb(null, data[1]);
+                    data = _.unserialize(data);
+                    if ( !data || _.time() > data[0] )
+                    {
+                        cb(null, false);
+                    }
+                    else
+                    {
+                        cb(null, data[1]);
+                    }
                 }
             }
         });

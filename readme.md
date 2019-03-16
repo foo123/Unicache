@@ -62,7 +62,7 @@ Supports both callback-based methods plus promise-based methods (if `Promises` a
 * `APC` **`PHP`** only
 * `APCU` **`PHP`** only (requires `apcu` extension)
 * `XCache` **`PHP`** only (requires `xcache` extension)
-* `Memcached` **`PHP`**  (requires `Memcache` or `Memcached` extension) + **`Node`** (requires [`node-memcached`](https://github.com/3rd-Eden/memcached) module, in progress)
+* `Memcached` **`PHP`**  (requires `Memcache` or `Memcached` extension) + **`Node`** (requires [`node-memcached`](https://github.com/3rd-Eden/memcached) module, `.clear()` method in progress)
 * `Redis` **`PHP`** + **`Node`** (requires [`node-redis`](https://github.com/NodeRedis/node_redis) module)
 * it is easy to extend to other methods as well.
 
@@ -73,14 +73,14 @@ Supports both callback-based methods plus promise-based methods (if `Promises` a
 * `LocalStorage`
 * `SessionStorage`
 * `IndexedDb`-based caching
-* `WebSql`-based caching (in progress)
+* `WebSql`-based caching (supported only on some browers, eg Chrome)
 * it is easy to extend to other methods as well.
 
 
 ### TODO
 
 * add `python` implementations
-* add client-side/browser support for `webSql` caching (in progress)
+* add client-side/browser support for `webSql` caching [DONE]
 * add support for Redis [DONE]
 * add support for xCache [DONE]
 * `node.js` and `browser` cache manipulation methods use standard callbacks (i.e as last argument w/ signature: `function(err,result)`) [DONE] and also promises (via same method names with "`Promise`" suffix) [DONE]

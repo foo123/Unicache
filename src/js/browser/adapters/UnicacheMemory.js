@@ -18,6 +18,7 @@ MemoryCache[PROTO]._cache = null;
 
 MemoryCache[PROTO].dispose = function( ) {
     this._cache = null;
+    return UNICACHE.Cache[PROTO].dispose.call(this);
 };
 
 MemoryCache[PROTO].supportsSync = function( ) {
@@ -118,7 +119,7 @@ MemoryCache[PROTO].gc = function( maxlifetime, cb ) {
         if ( !pl || 0===key.indexOf(this.prefix) )
         {
             data = this._cache[key];
-            if ( data[0]-currenttime < maxlifetime )
+            if ( data[0] < currenttime-maxlifetime )
                 delete this._cache[key];
         }
     }

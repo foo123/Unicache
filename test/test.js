@@ -1,5 +1,5 @@
 
-var UNICACHE = require(__dirname+'/../src/js/Unicache.js');
+var UNICACHE = require(__dirname+'/../src/js/node/Unicache.js');
 
 console.log('UNICACHE.VERSION = ' + UNICACHE.Factory.VERSION);
 
@@ -26,6 +26,15 @@ cache.putPromise('key', 'val', 10)
             throw err;
         });
     }, 2000);
+    setTimeout(function(){
+        cache.getPromise('key')
+        .then(function(val){
+            console.log(['val', val]);
+        })
+        .catch(function(err){
+            throw err;
+        });
+    }, 12000);
 })
 .catch(function(err){
     throw err;

@@ -18,6 +18,7 @@ module.exports = function( UNICACHE ) {
 
     MemoryCache[PROTO].dispose = function( ) {
         this._cache = null;
+        return UNICACHE.Cache[PROTO].dispose.call(this);
     };
 
     MemoryCache[PROTO].supportsSync = function( ) {
@@ -117,7 +118,7 @@ module.exports = function( UNICACHE ) {
             if ( !pl || 0===key.indexOf(this.prefix) )
             {
                 data = this._cache[key];
-                if ( data[0]-currenttime < maxlifetime )
+                if ( data[0] < currenttime-maxlifetime )
                     delete this._cache[key];
             }
         }

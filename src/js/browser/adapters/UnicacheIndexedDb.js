@@ -121,8 +121,9 @@ IndexedDbCache[PROTO].open = function( cb ) {
             if ( self.queue )
             {
                 var err = new Error('IndexedDB Open Error with code '+self.request.errorCode);
-                self.queue.map(function(cb){ cb(err, null); });
+                var queue = self.queue;
                 self.queue = null;
+                queue.map(function(cb){ cb(err, null); });
             }
         };
         self.request.onblocked = function(event) {
@@ -151,8 +152,9 @@ IndexedDbCache[PROTO].open = function( cb ) {
 
             if ( self.queue )
             {
-                self.queue.map(function(cb){ cb(null, self.db); });
+                var queue = self.queue;
                 self.queue = null;
+                queue.map(function(cb){ cb(null, self.db); });
             }
         };
     }
@@ -188,8 +190,7 @@ IndexedDbCache[PROTO].dispose = function( ) {
     this.db = null;
     this.request = null;
     this.queue = null;
-    UNICACHE.Cache.call(this);
-    return this;
+    return UNICACHE.Cache[PROTO].dispose.call(this);
 };
 
 IndexedDbCache[PROTO].supportsSync = function( ) {
@@ -301,7 +302,7 @@ IndexedDbCache[PROTO].gc = function( maxlifetime, cb ) {
                 if ( cursor )
                 {
                     var expires = cursor.value[0];
-                    if ( expires-currenttime < maxlifetime ) todel.push(cursor.key);
+                    if ( expires < currenttime-maxlifetime ) todel.push(cursor.key);
                     cursor.continue();
                 }
                 else

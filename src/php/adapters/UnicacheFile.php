@@ -108,7 +108,7 @@ class UNICACHE_FileCache extends UNICACHE_Cache
                 {
                     $mtime = filemtime($file);
                     if ( false===$mtime ) continue;
-                    if ($mtime+$maxlifetime < $currenttime )
+                    if ($mtime < $currenttime-$maxlifetime )
                     {
                         // expired, delete
                         @unlink($file);

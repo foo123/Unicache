@@ -148,7 +148,7 @@ SessionStorageCache[PROTO].gc = function( maxlifetime, cb ) {
         key = key.slice(EXPIRE.length);
         if ( !pl || 0===key.indexOf(this.prefix) )
         {
-            if ( getExpires(key)-currenttime < maxlifetime )
+            if ( getExpires(key) < currenttime-maxlifetime )
                 todel.push(key);
         }
     }
