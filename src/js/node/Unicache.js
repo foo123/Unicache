@@ -1,127 +1,127 @@
 /**
 *  Unicache
-*  An agnostic caching framework for PHP, Node.js, Browser, Python
+*  An agnostic caching framework for PHP, JavaScript, Python
 *
-*  @version: 1.2.0
+*  @version: 1.3.0
 *  https://github.com/foo123/Unicache
 *
 **/
-!function( root, name, factory ){
+!function(root, name, factory){
 "use strict";
-if ( ('object'===typeof module)&&module.exports ) /* CommonJS */
+if (('object'===typeof module)&&module.exports) /* CommonJS */
     (module.$deps = module.$deps||{}) && (module.exports = module.$deps[name] = factory.call(root));
-else if ( ('function'===typeof define)&&define.amd&&('function'===typeof require)&&('function'===typeof require.specified)&&require.specified(name) /*&& !require.defined(name)*/ ) /* AMD */
-    define(name,['module'],function(module){factory.moduleUri = module.uri; return factory.call(root);});
-else if ( !(name in root) ) /* Browser/WebWorker/.. */
-    (root[name] = factory.call(root)||1)&&('function'===typeof(define))&&define.amd&&define(function(){return root[name];} );
-}(  /* current root */          'undefined' !== typeof self ? self : this,
-    /* module name */           "UNICACHE",
-    /* module factory */        function ModuleFactory__UNICACHE( undef ){
+else if (('function'===typeof define)&&define.amd&&('function'===typeof require)&&('function'===typeof require.specified)&&require.specified(name) /*&& !require.defined(name)*/) /* AMD */
+    define(name,['module'],function(module) {factory.moduleUri = module.uri; return factory.call(root);});
+else if (!(name in root)) /* Browser/WebWorker/.. */
+    (root[name] = factory.call(root)||1)&&('function'===typeof(define))&&define.amd&&define(function() {return root[name];} );
+}(/* current root */          'undefined' !== typeof self ? self : this,
+  /* module name */           "UNICACHE",
+  /* module factory */        function ModuleFactory__UNICACHE(undef) {
 "use strict";
 
-var VERSION = '1.2.0', PROTO = 'prototype', NotImplemented = new Error("Not Implemented!");
+var VERSION = '1.3.0', PROTO = 'prototype', NotImplemented = new Error("Not Implemented!");
 
 var UNICACHE = {};
-UNICACHE.Cache = function(){};
+UNICACHE.Cache = function() {};
 UNICACHE.Cache[PROTO] = {
 
     constructor: UNICACHE.Cache,
-    
-    dispose: function( ) {
+
+    dispose: function() {
         return this;
     },
-    
-    supportsSync: function( ) {
+
+    supportsSync: function() {
         // whether this cache type supports sync operations
         // else a callback needs to be provided (as last argument in standard manner)
         return false;
     },
-    
+
     prefix: '',
-    setPrefix: function( prefix ) {
-        this.prefix = !!prefix ? (''+prefix) : '';
+    setPrefix: function(prefix) {
+        this.prefix = !!prefix ? String(prefix) : '';
         return this;
     },
 
     // NOTE: All following cache manipulation methods can be "promisified" if wanted
     // since they use callbacks in standard manner i.e as last arguments with signature: function(err, result)
     // abstract methods, need implementation
-    get: function( key, cb ){
+    get: function(key, cb) {
         throw NotImplemented;
     },
-    put: function( key, data, ttl, cb ){
+    put: function(key, data, ttl, cb) {
         throw NotImplemented;
     },
-    remove: function( key, cb ){
+    remove: function(key, cb) {
         throw NotImplemented;
     },
-    clear: function( cb ){
+    clear: function(cb) {
         throw NotImplemented;
     },
-    gc: function( maxlifetime, cb ){
+    gc: function(maxlifetime, cb) {
         throw NotImplemented;
     },
-    
+
     // promisified methods
-    getPromise: function( key ){
+    getPromise: function(key) {
         var self = this;
-        if ( 'function' === typeof Promise )
+        if ('function' === typeof Promise)
         {
-            return new Promise(function(resolve,reject){
-                self.get(key, function(err,res){
-                    if ( err ) reject(err);
+            return new Promise(function(resolve, reject) {
+                self.get(key, function(err, res) {
+                    if (err) reject(err);
                     else resolve(res);
                 });
             });
         }
         return null;
     },
-    putPromise: function( key, data, ttl ){
+    putPromise: function(key, data, ttl) {
         var self = this;
-        if ( 'function' === typeof Promise )
+        if ('function' === typeof Promise)
         {
-            return new Promise(function(resolve,reject){
-                self.put(key, data, ttl, function(err,res){
-                    if ( err ) reject(err);
+            return new Promise(function(resolve, reject) {
+                self.put(key, data, ttl, function(err, res) {
+                    if (err) reject(err);
                     else resolve(res);
                 });
             });
         }
         return null;
     },
-    removePromise: function( key ){
+    removePromise: function(key) {
         var self = this;
-        if ( 'function' === typeof Promise )
+        if ('function' === typeof Promise)
         {
-            return new Promise(function(resolve,reject){
-                self.remove(key, function(err,res){
-                    if ( err ) reject(err);
+            return new Promise(function(resolve, reject) {
+                self.remove(key, function(err, res) {
+                    if (err) reject(err);
                     else resolve(res);
                 });
             });
         }
         return null;
     },
-    clearPromise: function( ){
+    clearPromise: function() {
         var self = this;
-        if ( 'function' === typeof Promise )
+        if ('function' === typeof Promise)
         {
-            return new Promise(function(resolve,reject){
-                self.clear(function(err,res){
-                    if ( err ) reject(err);
+            return new Promise(function(resolve, reject) {
+                self.clear(function(err, res){
+                    if (err) reject(err);
                     else resolve(res);
                 });
             });
         }
         return null;
     },
-    gcPromise: function( maxlifetime ){
+    gcPromise: function(maxlifetime) {
         var self = this;
-        if ( 'function' === typeof Promise )
+        if ('function' === typeof Promise)
         {
-            return new Promise(function(resolve,reject){
-                self.gc(maxlifetime, function(err,res){
-                    if ( err ) reject(err);
+            return new Promise(function(resolve, reject) {
+                self.gc(maxlifetime, function(err, res) {
+                    if (err) reject(err);
                     else resolve(res);
                 });
             });
@@ -135,133 +135,143 @@ var _ = UNICACHE._ = {
     TRIM_RE: null,
     LTRIM_RE: null,
     RTRIM_RE: null,
-    
-    time: function( ){
+
+    time: function() {
         return Math.floor(new Date().getTime() / 1000);
     },
-    serialize: function( data ) {
+    serialize: function(data) {
         return JSON.stringify(data);
     },
-    unserialize: function( data ) {
+    unserialize: function(data) {
         return JSON.parse(data);
     },
-    isset: function( o, k, strict ) {
+    isset: function(o, k, strict) {
         var exists = !!(o && Object.prototype.hasOwnProperty.call(o, k));
-        return true===strict ? exists && (null != o[k]) : exists;
+        return true === strict ? exists && (null != o[k]) : exists;
     },
-    md5: function( data ) {
-        return require('crypto').createHash('md5').update(''+data).digest('hex');
+    md5: function(data) {
+        return require('crypto').createHash('md5').update(String(data)).digest('hex');
     },
     trim: function(str, charlist) {
       var re;
-      if ( 2>arguments.length )
+      if (2 > arguments.length)
       {
-          if ( !this.TRIM_RE )
+          if (!this.TRIM_RE)
               this.TRIM_RE = new RegExp('^[' + ' \\s\u00A0' + ']+|[' + ' \\s\u00A0' + ']+$', 'g');
           re = this.TRIM_RE;
       }
       else
       {
-          charlist = (''+charlist).replace(this.ESC_RE, '\\$1');
+          charlist = String(charlist).replace(this.ESC_RE, '\\$1');
           re = new RegExp('^[' + charlist + ']+|[' + charlist + ']+$', 'g');
       }
-      return ('' + str).replace(re, '')
+      return String(str).replace(re, '')
     },
     ltrim: function(str, charlist) {
       var re;
-      if ( 2>arguments.length )
+      if (2 > arguments.length)
       {
-          if ( !this.LTRIM_RE )
+          if (!this.LTRIM_RE)
               this.LTRIM_RE = new RegExp('^[' + ' \\s\u00A0' + ']+', 'g');
           re = this.LTRIM_RE;
       }
       else
       {
-          charlist = (''+charlist).replace(this.ESC_RE, '\\$1');
+          charlist = String(charlist).replace(this.ESC_RE, '\\$1');
           re = new RegExp('^[' + charlist + ']+', 'g');
       }
-      return ('' + str).replace(re, '')
+      return String(str).replace(re, '')
     },
     rtrim: function(str, charlist) {
       var re;
-      if ( 2>arguments.length )
+      if (2 > arguments.length)
       {
-          if ( !this.RTRIM_RE )
+          if (!this.RTRIM_RE)
               this.RTRIM_RE = new RegExp('[' + ' \\s\u00A0' + ']+$', 'g');
           re = this.RTRIM_RE;
       }
       else
       {
-          charlist = (''+charlist).replace(this.ESC_RE, '\\$1');
+          charlist = String(charlist).replace(this.ESC_RE, '\\$1');
           re = new RegExp('[' + charlist + ']+$', 'g');
       }
-      return ('' + str).replace(re, '')
+      return String(str).replace(re, '')
     }
 };
 
-UNICACHE.Factory = function(){};
+UNICACHE.Factory = function() {};
 UNICACHE.Factory.VERSION = VERSION;
-UNICACHE.Factory.getCache = function( config ) {
-    var backend = _.isset(config, 'cacheType', true) ? (''+config['cacheType']).toUpperCase() : 'MEMORY';
-    var cache = null;
-
-    switch( backend )
+UNICACHE.Factory.getCache = function(cfgs) {
+    if ('[object Array]' !== Object[PROTO].toString.call(cfgs)) cfgs = [cfgs];
+    // try and get the first that is supported
+    for (var i=0,n=cfgs.length; i<n; ++i)
     {
-        case 'FILE':
-            if ( !UNICACHE.FileCache )
-                UNICACHE.FileCache = require(__dirname+'/adapters/UnicacheFile.js')(UNICACHE);
-            if ( !UNICACHE.FileCache.isSupported() )
-            {
-                throw new ReferenceError('UNICACHE: Cache "'+backend+'" is NOT supported!');
-            }
-            else
-            {
-                cache = new UNICACHE.FileCache();
-                cache.setEncoding( config['FILE']['encoding'] ).setCacheDir( config['FILE']['cacheDir'] );
-            }
-            break;
-        case 'MEMCACHED':
-            if ( !UNICACHE.MemcachedCache )
-                UNICACHE.MemcachedCache = require(__dirname+'/adapters/UnicacheMemcached.js')(UNICACHE);
-            if ( !UNICACHE.MemcachedCache.isSupported() )
-            {
-                throw new ReferenceError('UNICACHE: Cache "'+backend+'" is NOT supported!');
-            }
-            else
-            {
-                cache = new UNICACHE.MemcachedCache();
-                cache.setOptions( config['MEMCACHED']['options'] ).setServers( config['MEMCACHED']['servers'] );
-            }
-            break;
-        case 'REDIS':
-            if ( !UNICACHE.RedisCache )
-                UNICACHE.RedisCache = require(__dirname+'/adapters/UnicacheRedis.js')(UNICACHE);
-            if ( !UNICACHE.RedisCache.isSupported() )
-            {
-                throw new ReferenceError('UNICACHE: Cache "'+backend+'" is NOT supported!');
-            }
-            else
-            {
-                cache = new UNICACHE.RedisCache();
-                cache.options( config['REDIS']['options'] );
-            }
-            break;
-        default:
-            // default in-memory cache
-            if ( !UNICACHE.MemoryCache )
-                UNICACHE.MemoryCache = require(__dirname+'/adapters/UnicacheMemory.js')(UNICACHE);
-            if ( !UNICACHE.MemoryCache.isSupported() )
-            {
-                throw new ReferenceError('UNICACHE: Cache "MEMORY" is NOT supported!');
-            }
-            else
-            {
-                cache = new UNICACHE.MemoryCache();
-            }
-            break;
+        var config = cfgs[i];
+        if (!config) continue;
+        var backend = _.isset(config, 'cacheType', true) ? String(config['cacheType']).toUpperCase() : 'MEMORY';
+        var cache = null;
+
+        switch (backend)
+        {
+            case 'FILE':
+                if (!UNICACHE.FileCache)
+                    UNICACHE.FileCache = require(__dirname+'/adapters/UnicacheFile.js')(UNICACHE);
+                if (!UNICACHE.FileCache.isSupported())
+                {
+                    //throw new ReferenceError('UNICACHE: Cache "'+backend+'" is NOT supported!');
+                }
+                else
+                {
+                    cache = new UNICACHE.FileCache();
+                    cache.setEncoding(config['FILE']['encoding']).setCacheDir(config['FILE']['cacheDir']);
+                }
+                break;
+            case 'MEMCACHED':
+                if (!UNICACHE.MemcachedCache)
+                    UNICACHE.MemcachedCache = require(__dirname+'/adapters/UnicacheMemcached.js')(UNICACHE);
+                if (!UNICACHE.MemcachedCache.isSupported())
+                {
+                    //throw new ReferenceError('UNICACHE: Cache "'+backend+'" is NOT supported!');
+                }
+                else
+                {
+                    cache = new UNICACHE.MemcachedCache();
+                    cache.setOptions(config['MEMCACHED']['options']).setServers(config['MEMCACHED']['servers']);
+                }
+                break;
+            case 'REDIS':
+                if (!UNICACHE.RedisCache)
+                    UNICACHE.RedisCache = require(__dirname+'/adapters/UnicacheRedis.js')(UNICACHE);
+                if (!UNICACHE.RedisCache.isSupported())
+                {
+                    //throw new ReferenceError('UNICACHE: Cache "'+backend+'" is NOT supported!');
+                }
+                else
+                {
+                    cache = new UNICACHE.RedisCache();
+                    cache.options(config['REDIS']['options']);
+                }
+                break;
+            case 'MEMORY':
+                if (!UNICACHE.MemoryCache)
+                    UNICACHE.MemoryCache = require(__dirname+'/adapters/UnicacheMemory.js')(UNICACHE);
+                if (!UNICACHE.MemoryCache.isSupported())
+                {
+                    //throw new ReferenceError('UNICACHE: Cache "MEMORY" is NOT supported!');
+                }
+                else
+                {
+                    cache = new UNICACHE.MemoryCache();
+                }
+                break;
+        }
+        if (cache)
+        {
+            cache.setPrefix(_.isset(config, 'prefix', true) ? config['prefix'] : '');
+            return cache;
+        }
     }
-    cache.setPrefix( _.isset(config, 'prefix', true) ? config['prefix'] : '' );
-    return cache;
+    return null;
 };
 
 // export it

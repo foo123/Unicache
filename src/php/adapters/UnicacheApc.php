@@ -1,8 +1,7 @@
 <?php
-
 class UNICACHE_APCCache extends UNICACHE_Cache
 {
-    public static function isSupported( )
+    public static function isSupported()
     {
         return (function_exists('apc_fetch') && function_exists('apc_store') && function_exists('apc_delete'));
     }
@@ -15,27 +14,27 @@ class UNICACHE_APCCache extends UNICACHE_Cache
     {
     }
 
-    public function get( $key )
+    public function get($key)
     {
-        return apc_fetch( $this->prefix.$key );
+        return apc_fetch($this->prefix . $key);
     }
 
-    public function put( $key, $data, $ttl )
+    public function put($key, $data, $ttl)
     {
-        return apc_store( $this->prefix.$key, $data, (int)$ttl );
+        return apc_store($this->prefix . $key, $data, (int)$ttl);
     }
 
-    public function remove( $key )
+    public function remove($key)
     {
-        return apc_delete( $this->prefix.$key );
+        return apc_delete($this->prefix . $key);
     }
 
-    public function clear( )
+    public function clear()
     {
         return false;
     }
 
-    public function gc( $maxlifetime )
+    public function gc($maxlifetime)
     {
         // handled automatically
         return true;

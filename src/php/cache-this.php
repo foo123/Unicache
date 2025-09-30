@@ -1,10 +1,10 @@
 <?php
 // include the unicache configuration
-require_once(dirname(__FILE__).'/unicache-config.php');
-require_once(dirname(__FILE__).'/Unicache.php');
+require_once(dirname(__FILE__) . '/unicache-config.php');
+require_once(dirname(__FILE__) . '/Unicache.php');
 
 // user defined function to check per page caching
-$unicache_docache=true;
+$unicache_docache = true;
 if (isset($unicache_config['cache_func']) && is_callable($unicache_config['cache_func']))
 {
     $unicache_docache = call_user_func($unicache_config['cache_func']);
@@ -13,7 +13,7 @@ if (isset($unicache_config['cache_func']) && is_callable($unicache_config['cache
 // if caching is enabled
 if ($unicache_docache)
 {
-    $cache=UNICACHE_Factory::getCache($unicache_config);
+    $cache = UNICACHE_Factory::getCache($unicache_config);
 
     $key = $_SERVER['REQUEST_URI'];
     $ttl = (int)$unicache_config['ttl'];
@@ -21,7 +21,7 @@ if ($unicache_docache)
     // shutdown function to output and cache
     function UNICACHE_cacheOutput()
     {
-        global $cache,$key,$ttl,$unicache_config;
+        global $cache, $key, $ttl, $unicache_config;
 
         $webpage = ob_get_contents();
 
@@ -31,7 +31,7 @@ if ($unicache_docache)
             $webpage = call_user_func($unicache_config['filter_func'], $webpage);
         }
         // cache page
-        $cache->put($key,$webpage,$ttl);
+        $cache->put($key, $webpage, $ttl);
 
         ob_end_clean();
         // show it first time
@@ -39,8 +39,9 @@ if ($unicache_docache)
     }
 
     // Is cache data still fresh? If so, serve it.
-    $data=$cache->get($key);
-    if ($data!=false) {
+    $data = $cache->get($key);
+    if ($data != false)
+    {
         echo $data;
         exit(0);
     }

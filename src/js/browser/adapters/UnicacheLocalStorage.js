@@ -1,4 +1,4 @@
-!function(UNICACHE){
+!function(UNICACHE) {
 "use strict";
 
 var PROTO = 'prototype', PREFIX = 'UNICACHE_', EXPIRE = 'UNICACHEEXPIRES_', _ = UNICACHE._,
@@ -8,7 +8,7 @@ function supportsStorage(type)
 {
 
     type = type || 'localStorage';
-    if ( !(type in ROOT) ) return false;
+    if (!(type in ROOT)) return false;
     try {
         // Create a test value and attempt to set, get and remove the
         // value. These are the core functionality required by locache
@@ -28,55 +28,55 @@ function supportsStorage(type)
 
 function set(key, value, expires)
 {
-    ROOT.localStorage.setItem(PREFIX+key, value);
-    ROOT.localStorage.setItem(EXPIRE+key, +expires);
+    ROOT.localStorage.setItem(PREFIX + key, value);
+    ROOT.localStorage.setItem(EXPIRE + key, +expires);
 }
 
 function get(key)
 {
-    return {data: ROOT.localStorage.getItem(PREFIX+key), expires: getExpires(key)};
+    return {data: ROOT.localStorage.getItem(PREFIX + key), expires: getExpires(key)};
 }
 
 function getExpires(key)
 {
-    var expires = ROOT.localStorage.getItem(EXPIRE+key);
+    var expires = ROOT.localStorage.getItem(EXPIRE + key);
     return expires ? parseInt(expires, 10) : null;
 }
 
 function del(key)
 {
-    ROOT.localStorage.removeItem(PREFIX+key);
-    ROOT.localStorage.removeItem(EXPIRE+key);
+    ROOT.localStorage.removeItem(PREFIX + key);
+    ROOT.localStorage.removeItem(EXPIRE + key);
 }
 
-var LocalStorageCache = UNICACHE.LocalStorageCache = function( ) {
+var LocalStorageCache = UNICACHE.LocalStorageCache = function() {
 };
 
 // extend UNICACHE.Cache class
 LocalStorageCache[PROTO] = Object.create(UNICACHE.Cache[PROTO]);
 
-LocalStorageCache.isSupported = function( ) {
+LocalStorageCache.isSupported = function() {
     return supportsStorage('localStorage');
 };
 
-LocalStorageCache[PROTO].supportsSync = function( ) {
+LocalStorageCache[PROTO].supportsSync = function() {
     // can read/write/etc using sync operations as well
     return true;
 };
 
-LocalStorageCache[PROTO].put = function( key, data, ttl, cb ) {
-    var v = [_.time()+ttl,data];
-    set(this.prefix+key, _.serialize(v), v[0]);
-    if ( 'function' === typeof cb ) cb(null, true);
+LocalStorageCache[PROTO].put = function(key, data, ttl, cb) {
+    var v = [_.time() + ttl, data];
+    set(this.prefix + key, _.serialize(v), v[0]);
+    if ('function' === typeof cb) cb(null, true);
     return true;
 };
 
-LocalStorageCache[PROTO].get = function( key, cb ) {
+LocalStorageCache[PROTO].get = function(key, cb) {
     var ret, v = get(this.prefix + key), now = _.time();
-    if ( v.data )
+    if (v.data)
     {
         v.data = _.unserialize(v.data);
-        if ( !v.data || v.data[0] < now || v.expires < now )
+        if (!v.data || (v.data[0] < now) || (v.expires < now))
         {
             del(this.prefix + key);
             ret = false;
@@ -90,7 +90,7 @@ LocalStorageCache[PROTO].get = function( key, cb ) {
     {
         ret = false;
     }
-    if ( 'function' === typeof cb )
+    if ('function' === typeof cb)
     {
         cb(null, ret);
     }
@@ -100,10 +100,10 @@ LocalStorageCache[PROTO].get = function( key, cb ) {
     }
 };
 
-LocalStorageCache[PROTO].remove = function( key, cb ) {
+LocalStorageCache[PROTO].remove = function(key, cb) {
     var ret = true;
     del(this.prefix + key);
-    if ( 'function' === typeof cb )
+    if ('function' === typeof cb)
     {
         cb(null, ret);
     }
@@ -113,21 +113,21 @@ LocalStorageCache[PROTO].remove = function( key, cb ) {
     }
 };
 
-LocalStorageCache[PROTO].clear = function( cb ) {
+LocalStorageCache[PROTO].clear = function(cb) {
     var todel = [];
-    for(var key,i=0,l=ROOT.localStorage.length; i<l; i++)
+    for(var key,i=0,l=ROOT.localStorage.length; i<l; ++i)
     {
         key = ROOT.localStorage.key(i);
-        if ( 0 !== key.indexOf(PREFIX) ) continue;
+        if (0 !== key.indexOf(PREFIX)) continue;
         key = key.slice(PREFIX.length);
-        if ( !this.prefix.length || 0===key.indexOf(this.prefix) )
+        if (!this.prefix.length || (0 === key.indexOf(this.prefix)))
         {
             todel.push(key);
         }
     }
-    todel.map(function(key){del(key);});
-    
-    if ( 'function' === typeof cb )
+    todel.map(function(key) {del(key);});
+
+    if ('function' === typeof cb)
     {
         cb(null, true);
     }
@@ -137,24 +137,24 @@ LocalStorageCache[PROTO].clear = function( cb ) {
     }
 };
 
-LocalStorageCache[PROTO].gc = function( maxlifetime, cb ) {
+LocalStorageCache[PROTO].gc = function(maxlifetime, cb) {
     maxlifetime = +maxlifetime;
     var currenttime = _.time(),
         pl = this.prefix.length, todel = [];
-    for(var key,i=0,l=ROOT.localStorage.length; i<l; i++)
+    for(var key,i=0,l=ROOT.localStorage.length; i<l; ++i)
     {
         key = ROOT.localStorage.key(i);
-        if ( 0 !== key.indexOf(EXPIRE) ) continue;
+        if (0 !== key.indexOf(EXPIRE)) continue;
         key = key.slice(EXPIRE.length);
-        if ( !pl || 0===key.indexOf(this.prefix) )
+        if (!pl || (0 === key.indexOf(this.prefix)))
         {
-            if ( getExpires(key) < currenttime-maxlifetime )
+            if (getExpires(key) < currenttime-maxlifetime)
                 todel.push(key);
         }
     }
-    todel.map(function(key){del(key);});
-    
-    if ( 'function' === typeof cb )
+    todel.map(function(key) {del(key);});
+
+    if ('function' === typeof cb)
     {
         cb(null, true);
     }

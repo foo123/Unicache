@@ -21,7 +21,7 @@ $unicache_config = array(
 // filter content after caching
 function my_filter($content)
 {
-    return $content.'<br />FILE '.date('y/m/d, H:i:s', time());
+    return $content . '<br />FILE ' . date('y/m/d, H:i:s', time());
 }
 // disable caching under certain conditions
 function my_cache()

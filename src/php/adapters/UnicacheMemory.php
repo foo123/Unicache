@@ -1,80 +1,81 @@
 <?php
-
 class UNICACHE_MemoryCache extends UNICACHE_Cache
 {
-    public static function isSupported( )
+    public static function isSupported()
     {
         return true;
     }
 
-    protected $_cache;
+    protected $cache;
 
     public function __construct()
     {
-        $this->_cache = array();
+        $this->cache = array();
     }
 
     public function __destruct()
     {
-        $this->_cache = null;
+        $this->cache = null;
     }
 
-    public function put( $key, $data, $ttl )
+    public function get($key)
     {
-        $this->_cache[$this->prefix.$key] = array(time()+(int)$ttl,$data);
-    }
+        $key = $this->prefix . $key;
+        if (!isset($this->cache[$key])) return false;
 
-    public function get( $key )
-    {
-        if ( !isset($this->_cache[$this->prefix.$key]) ) return false;
+        $data = $this->cache[$key];
 
-        $data = $this->_cache[$this->prefix.$key];
-
-        if ( !$data || time() > $data[0] )
+        if (!$data || (time() > $data[0]))
         {
-            unset($this->_cache[$this->prefix.$key]);
+            unset($this->cache[$key]);
             return false;
         }
         return $data[1];
     }
 
-    public function remove( $key )
+    public function put($key, $data, $ttl)
     {
-        if ( !isset($this->_cache[$this->prefix.$key]) ) return false;
-        unset($this->_cache[$this->prefix.$key]);
+        $this->cache[$this->prefix . $key] = array(time() + (int)$ttl, $data);
+    }
+
+    public function remove($key)
+    {
+        $key = $this->prefix . $key;
+        if (!isset($this->cache[$key])) return false;
+        unset($this->cache[$key]);
         return true;
     }
 
-    public function clear( )
+    public function clear()
     {
-        if ( !strlen($this->prefix) )
+        if (!strlen($this->prefix))
         {
-            $this->_cache = array();
+            $this->cache = array();
         }
         else
         {
-            foreach($this->_cache as $key=>$data)
+            foreach ($this->cache as $key => $data)
             {
-                if ( 0===strpos($key, $this->prefix, 0) )
+                if (0 === strpos($key, $this->prefix, 0))
                 {
-                    unset($this->_cache[$key]);
+                    unset($this->cache[$key]);
                 }
             }
         }
         return true;
     }
 
-    public function gc( $maxlifetime )
+    public function gc($maxlifetime)
     {
         $maxlifetime = (int)$maxlifetime;
         $currenttime = time();
         $l = strlen($this->prefix);
-        foreach($this->_cache as $key=>$data)
+        foreach ($this->cache as $key => $data)
         {
-            if ( !$l || 0===strpos($key, $this->prefix, 0) )
+            if (!$l || (0 === strpos($key, $this->prefix, 0)))
             {
-                if ( $data[0] < $currenttime-$maxlifetime )
-                    unset($this->_cache[$key]);
+                if ($data[0] < $currenttime-$maxlifetime )
+                    unset($this->cache[$key]);
             }
         }
         return true;

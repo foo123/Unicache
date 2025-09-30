@@ -1,17 +1,14 @@
 <?php
-
-require_once(dirname(__FILE__).'/drivers/redis.php');
-
 class UNICACHE_RedisCache extends UNICACHE_Cache
 {
-    public static function isSupported( )
+    public static function isSupported()
     {
         //return extension_loaded('redis');
         return true;
     }
 
     // Lightweight Redis client
-    private $redis;
+    protected $redis;
 
     public function __construct()
     {
@@ -22,18 +19,12 @@ class UNICACHE_RedisCache extends UNICACHE_Cache
         $this->redis = null;
     }
 
-    public function put( $key, $data, $ttl )
-    {
-        $data = serialize(array(time()+(int)$ttl, $data));
-        return $this->redis->cmd('SET', $this->prefix.$key, $data)->cmd('EXPIRE', $this->prefix.$key, (int)$ttl)->set();
-    }
-
-    public function get( $key )
+    public function get($key)
     {
         $data = $this->redis->cmd('GET', $this->prefix.$key)->get();
-        if ( !$data ) return false;
+        if (!$data) return false;
         $data = @unserialize($data);
-        if ( !$data || time() > $data[0] )
+        if (!$data || (time() > $data[0]))
         {
             //$this->redis->cmd('UNLINK', $this->prefix.$key)->set();
             return false;
@@ -41,17 +32,23 @@ class UNICACHE_RedisCache extends UNICACHE_Cache
         return $data[1];
     }
 
-    public function remove( $key )
+    public function put($key, $data, $ttl)
+    {
+        $data = serialize(array(time() + (int)$ttl, $data));
+        return $this->redis->cmd('SET', $this->prefix.$key, $data)->cmd('EXPIRE', $this->prefix.$key, (int)$ttl)->set();
+    }
+
+    public function remove($key)
     {
         return $this->redis->cmd('UNLINK', $this->prefix.$key)->set();
     }
 
-    public function clear( )
+    public function clear()
     {
         // consider using SCAN command to retrieve keys by prefix for `clear` method
         $keys = $this->redis->cmd('KEYS', $this->prefix.'*')->get();
-        if ( !$keys ) return true;
-        foreach($keys as $key)
+        if (!$keys) return true;
+        foreach ($keys as $key)
         {
             $this->redis->cmd('UNLINK', $key);
         }
@@ -59,15 +56,19 @@ class UNICACHE_RedisCache extends UNICACHE_Cache
         return true;
     }
 
-    public function gc( $maxlifetime )
+    public function gc($maxlifetime)
     {
         // handled automatically
         return true;
     }
 
-    public function server( $host, $port=6379 )
+    public function server($host, $port = 6379)
     {
-        $this->redis = new redis_cli( $host, $port );
+        if (!class_exists('redis_cli', false))
+        {
+            require_once(dirname(__FILE__) . '/drivers/redis.php');
+        }
+        $this->redis = new redis_cli($host, $port);
         return $this;
     }
 }
