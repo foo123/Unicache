@@ -1,6 +1,5 @@
 <?php
-
-require_once(dirname(dirname(__FILE__)).'/src/php/Unicache.php');
+require_once(dirname(dirname(__FILE__)) . '/src/php/Unicache.php');
 
 echo 'UNICACHE::VERSION = ' . UNICACHE_Factory::VERSION . PHP_EOL;
 
@@ -22,10 +21,10 @@ sleep(2);
 
 $val = $cache->get('key');
 
-print_r(array('val',$val));
+print_r(array('val', $val));
 
 sleep(12);
 
 $val = $cache->get('key');
 
-print_r(array('val',$val));
+print_r(array('val', $val));

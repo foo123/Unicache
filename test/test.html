@@ -9,13 +9,13 @@
 <strong>Open browser Console!</strong>
 
 <script>
-var config = {
+const config = {
     prefix: 'my',
     cacheType: 'INDEXEDDB'
 };
-var cache = UNICACHE.Factory.getCache(config);
-cache.getPromise('foo').then(function(val){
-    if ( val )
+const cache = UNICACHE.Factory.getCache(config);
+cache.getPromise('foo').then(function(val) {
+    if (val)
     {
         console.log('Foo already set');
         console.log(val);
@@ -24,17 +24,17 @@ cache.getPromise('foo').then(function(val){
     {
         console.log('Foo NOT set');
     }
-    return cache.putPromise('foo', 'bar', 3600).then(function(){
-        setTimeout(function(){
-            cache.getPromise('foo').then(function(val){
+    return cache.putPromise('foo', 'bar', 3600).then(function() {
+        setTimeout(function() {
+            cache.getPromise('foo').then(function(val) {
                 console.log(val);
-            }).catch(function(err){
+            }).catch(function(err) {
                 console.error(err);
                 throw err;
             });
         }, 2000);
     });
-}).catch(function(err){
+}).catch(function(err) {
     console.error(err);
     throw err;
 });
